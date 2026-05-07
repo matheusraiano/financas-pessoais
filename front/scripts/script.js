@@ -18,9 +18,7 @@ const cleanupFunctions = [];
 const paginas = {
     'dashboard.html': inicializarDashboard,
     'extrato.html': inicializarExtrato,
-    'transacoes.html': inicializarTransacoes,
     'investimentos.html': inicializarInvestimentos,
-    'emprestimos.html': inicializarEmprestimos,
     'notificacoes.html': inicializarNotificacoes
 };
 //
@@ -130,27 +128,11 @@ function inicializarExtrato() {
 }
 //
 // ================================
-// TRANSAÇÕES
-// ================================
-//
-function inicializarTransacoes() {
-    console.log('Transações carregado');
-}
-//
-// ================================
 // INVESTIMENTOS
 // ================================
 //
 function inicializarInvestimentos() {
     console.log('Investimentos carregado');
-}
-//
-// ================================
-// EMPRÉSTIMOS
-// ================================
-//
-function inicializarEmprestimos() {
-    console.log('Empréstimos carregado');
 }
 //
 // ================================

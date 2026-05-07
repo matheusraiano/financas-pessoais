@@ -4,19 +4,15 @@
 /*GERAL*/
 /**/
 :root {
-    --cor1: green;
-    --cor2: yellow;
-    --cor3: blue;
-    --verdeClaro: rgb(62, 209, 62);
+    --roxo: purple;
+    --roxoClaro: rgb(194, 55, 194);
     --bordaCinza: rgb(68, 68, 68);
     --linhaHr: #333;
     --textosP: rgb(146, 141, 135);
-    --boxShadowVerdeClaro: rgba(8, 255, 20, 0.418);
-    --boxShadowVerde: rgba(16, 155, 23, 0.418);
+    --boxShadowRoxoClaro: rgba(194, 55, 194, 0.418);
+    --boxShadowRoxo: rgba(128, 0, 128, 0.418);
     --fundoPreto: rgb(27, 27, 27);
-    --verdeTransparente: rgba(0, 128, 0, 0.158);
-    --amareloTransparente: rgba(128, 119, 0, 0.158);
-    --vermelhoTransparente: rgba(128, 0, 0, 0.158);
+    --roxoTransparente: rgba(102, 0, 128, 0.158);
     --transparente: rgba(255, 255, 255, 0);
 }
 
@@ -83,7 +79,7 @@ div.perfil-perfil img {
 }
 div.perfil-perfil img:hover {
     cursor: pointer;
-    box-shadow: 0px 0px 20px 2px var(--boxShadowVerdeClaro);
+    box-shadow: 0px 0px 40px 4px var(--boxShadowRoxoClaro);
 }
 /**/
 /*MAIN*/
@@ -119,12 +115,12 @@ div.nav-item {
     color: #575656;
 }
 div.nav-item.ativo {
-    background-color: var(--verdeTransparente);
+    background-color: var(--roxoTransparente);
     color: white;
-    border-left: 3px solid var(--verdeClaro);
+    border-left: 3px solid var(--roxoClaro);
 }
 div.nav-item:hover {
-    background-color: var(--verdeTransparente);
+    background-color: var(--roxoTransparente);
     color: white;
     cursor: pointer;
 }
