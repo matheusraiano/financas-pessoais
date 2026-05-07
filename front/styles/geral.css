@@ -1,0 +1,37 @@
+/*Código de Matheus Raiano*/
+@import url(pages/dashboard.css);
+@import url(layout/header.css);
+@import url(layout/main.css);
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+/**/
+/*GERAL*/
+/**/
+:root {
+    --roxo: purple;
+    --roxoClaro: rgb(194, 55, 194);
+    --bordaCinza: rgb(68, 68, 68);
+    --linhaHr: #333;
+    --textosP: rgb(146, 141, 135);
+    --boxShadowRoxoClaro: rgba(194, 55, 194, 0.418);
+    --boxShadowRoxo: rgba(128, 0, 128, 0.418);
+    --fundoPreto: rgb(27, 27, 27);
+    --roxoTransparente: rgba(102, 0, 128, 0.158);
+    --transparente: rgba(255, 255, 255, 0);
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+    display: grid;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+}

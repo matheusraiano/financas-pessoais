@@ -1,4 +1,8 @@
 //Código de Matheus Raiano
+import { inicializarDashboard } from './pages/dashboard.js';
+import { inicializarExtrato } from './pages/extrato.js';
+import { inicializarInvestimentos } from './pages/investimentos.js';
+import { inicializarNotificacoes } from './pages/notificacoes.js';
 //
 // ELEMENTOS PRINCIPAIS
 //
@@ -38,7 +42,7 @@ function carregarPagina(pagina) {
 
     conteudo.innerHTML = "<p>Carregando...</p>";
 
-    fetch(`../paginas/${pagina}`)
+    fetch(`pages/${pagina}`)
         .then(res => res.text())
         .then(html => {
             // salva cache
@@ -110,35 +114,3 @@ navItems.forEach(item => {
         item.classList.remove('ativo');
     }
 });
-//
-// ================================
-// DASHBOARD
-// ================================
-//
-function inicializarDashboard() {
-    console.log('Dashboard carregado');
-}
-//
-// ================================
-// EXTRATO
-// ================================
-//
-function inicializarExtrato() {
-    console.log('Extrato carregado');
-}
-//
-// ================================
-// INVESTIMENTOS
-// ================================
-//
-function inicializarInvestimentos() {
-    console.log('Investimentos carregado');
-}
-//
-// ================================
-// NOTIFICAÇÕES
-// ================================
-//
-function inicializarNotificacoes() {
-    console.log('Notificações carregado');
-}

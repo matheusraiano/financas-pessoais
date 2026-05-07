@@ -1,0 +1,44 @@
+@import url(../geral.css);
+/**/
+/*MAIN*/
+/**/
+main.perfil-main {
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    min-height: 100vh;
+}
+/*Barra Lateral*/
+aside.perfil-aside {
+    background-color: #0f0f0f;
+}
+aside.perfil-aside h3 {
+    text-align: center;
+    color: var(--textosP);
+    text-transform: uppercase;
+}
+aside.perfil-aside hr {
+    width: 70%;
+    border: 0; 
+    height: 1px; 
+    background-color: #777474;
+}
+nav.perfil-navegacao {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+div.nav-item {
+    padding: 15px;
+    transition: all 0.3s ease;
+    color: #575656;
+}
+div.nav-item.ativo {
+    background-color: var(--roxoTransparente);
+    color: white;
+    border-left: 3px solid var(--roxoClaro);
+}
+div.nav-item:hover {
+    background-color: var(--roxoTransparente);
+    color: white;
+    cursor: pointer;
+}
