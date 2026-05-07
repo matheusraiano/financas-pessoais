@@ -1,9 +1,19 @@
+/*Código de Matheus Raiano*/
+
+/**/
+/*DASHBOARD*/
+/**/
+
 section.dashboard {
     display: flex;
     flex-direction: column;
     gap: 20px;
     padding: 25px;
 }
+
+/**/
+/*CARDS FINANCEIROS*/
+/**/
 
 div.cards-financeiros {
     display: grid;
@@ -34,11 +44,19 @@ div.card-financeiro h2 {
     font-size: 28px;
 }
 
+/**/
+/*GRID PRINCIPAL*/
+/**/
+
 div.dashboard-grid {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 20px;
 }
+
+/**/
+/*BOXES DO DASHBOARD*/
+/**/
 
 div.dashboard-box {
     background: #111;
@@ -46,6 +64,10 @@ div.dashboard-box {
     padding: 20px;
     border: 1px solid rgba(255,255,255,0.05);
 }
+
+/**/
+/*FORMULÁRIO*/
+/**/
 
 form#form-transacao {
     display: flex;
@@ -60,79 +82,37 @@ div.grupo-form {
 
 div.grupo-form input,
 div.grupo-form select {
-
     flex: 1;
-
     background: #0d0d0d;
-
     border: 1px solid rgba(255,255,255,0.05);
-
     padding: 14px;
-
     border-radius: 10px;
-
     color: white;
-
     outline: none;
-
 }
 
+/**/
+/*BOTÃO DE TRANSAÇÃO*/
+/**/
+
 form#form-transacao button {
-
     background: var(--roxo);
-
     border: none;
-
     padding: 14px;
-
     border-radius: 10px;
-
     color: white;
-
     font-weight: bold;
-
     cursor: pointer;
-
     transition: 0.3s;
-
 }
 
 form#form-transacao button:hover {
-
     background: var(--roxoClaro);
-
 }
 
-div.transacao-acoes {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-button.btn-remover {
-
-    background: rgba(255, 0, 0, 0.1);
-
-    border: none;
-
-    color: #ff4d6d;
-
-    width: 32px;
-    height: 32px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    transition: 0.3s;
-
-}
-
-button.btn-remover:hover {
-
-    background: rgba(255, 0, 0, 0.2);
-
-}
+/**/
+/*TRANSAÇÕES*/
+/**/
 
 div.transacao {
     display: flex;
@@ -162,20 +142,4 @@ div.transacao-valor.receita {
 div.transacao-valor.despesa {
     color: #ff4d6d;
     font-weight: bold;
-}
-
-div.alerta {
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 10px;
-}
-
-div.alerta.erro {
-    background: rgba(255, 0, 0, 0.1);
-    color: #ff4d6d;
-}
-
-div.alerta.aviso {
-    background: rgba(255, 166, 0, 0.1);
-    color: orange;
 }
