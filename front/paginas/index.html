@@ -3,36 +3,54 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Finanças</title>
+        <title>Finanças Pessoais</title>
         <link rel="stylesheet" href="../estilos/geral.css">
         <link rel="shortcut icon" href="../midias/icone.ico" type="image/x-icon">
     </head>
     <body>
-        <header>
-            <img src="" alt="Imagem do site">
-            <h1>Bem-Vindo à finanças pessoais!</h1>
+        <header class="perfil-header">
+            <img src="../midias/LogoSo2SemFundo.png" alt="Imagem do site">
+            <div class="header-center">
+                <span>🔍</span>
+                <input type="text" placeholder="Buscar transações, produtos...">
+            </div>
+            <div class="perfil-perfil">
+                <img src="../midias/perfil.jpg" alt="Imagem de Perfil">
+            </div>
         </header>
-        <main class="conteudo">
-            <aside>
+        <main class="perfil-main">
+            <aside class="perfil-aside">
                 <h3>Menu</h3>
                 <hr>
-                <nav class="navegacao">
-                    <div class="nav-item">
+                <nav class="perfil-navegacao">
+                    <div class="nav-item" data-page="dashboard.html">
                         <span class="nav-icon">📊</span>
                         <span>Dashboard</span>
                     </div>
-                    <div class="nav-item">
-                        <span class="nav-icon">💳</span>
+                    <div class="nav-item" data-page="extrato.html">
+                        <span class="nav-icon">📄</span>
+                        <span>Extrato</span>
+                    </div>
+                    <div class="nav-item" data-page="transacoes.html">
+                        <span class="nav-icon">🔄</span>
                         <span>Transações</span>
                     </div>
-                    <div class="nav-item">
-                        <span class="nav-icon">📄</span>
-                        <span>Relatórios</span>
+                    <div class="nav-item" data-page="investimentos.html">
+                        <span class="nav-icon">📈</span>
+                        <span>Investimentos</span>
+                    </div>
+                    <div class="nav-item" data-page="emprestimos.html">
+                        <span class="nav-icon">💰</span>
+                        <span>Empréstimos</span>
+                    </div>
+                    <div class="nav-item" data-page="notificacoes.html">
+                        <span class="nav-icon">🔔</span>
+                        <span>Notificações</span>
                     </div>
                 </nav>
             </aside>
-            <section>
-                <h1>TESTE</h1>
+            <section class="perfil-conteudo">
+                <div id="conteudo-dinamico"></div>
             </section>
         </main>
         <footer>

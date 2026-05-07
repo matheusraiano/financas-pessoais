@@ -1,43 +1,114 @@
-@charset "UFT-8";
+/*Código de Matheus Raiano*/
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
-
-html { 
-    scroll-behavior: smooth; 
+/**/
+/*GERAL*/
+/**/
+:root {
+    --cor1: green;
+    --cor2: yellow;
+    --cor3: blue;
+    --verdeClaro: rgb(62, 209, 62);
+    --bordaCinza: rgb(68, 68, 68);
+    --linhaHr: #333;
+    --textosP: rgb(146, 141, 135);
+    --boxShadowVerdeClaro: rgba(8, 255, 20, 0.418);
+    --boxShadowVerde: rgba(16, 155, 23, 0.418);
+    --fundoPreto: rgb(27, 27, 27);
+    --verdeTransparente: rgba(0, 128, 0, 0.158);
+    --amareloTransparente: rgba(128, 119, 0, 0.158);
+    --vermelhoTransparente: rgba(128, 0, 0, 0.158);
+    --transparente: rgba(255, 255, 255, 0);
 }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
 body {
-    margin: 0;
-    padding: 0;
     display: grid;
     font-family: 'DM Sans', sans-serif;
     font-size: 15px;
     line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
 }
-header {
-    background-color: #202020;
+/**/
+/*HEADER*/
+/**/
+header.perfil-header {
+    background-color: #0f0f0f;
     display: grid;
-    grid-template-columns: 1fr 5fr;
+    grid-template-columns: 1fr 7fr 1fr;
     color: #575656;
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
-main.conteudo {
+header.perfil-header img {
+    width: 50%;
+    margin: auto;
+}
+div.header-center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #070707;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: #888;
+    margin: auto;
+}
+div.header-center input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e8e8e8;
+    font-family: inherit;
+    font-size: 13px;
+    width: 500px;
+}
+div.perfil-perfil {
+    width: 50%;
+    margin: auto;
+}
+div.perfil-perfil img {
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+div.perfil-perfil img:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 20px 2px var(--boxShadowVerdeClaro);
+}
+/**/
+/*MAIN*/
+/**/
+main.perfil-main {
     display: grid;
     grid-template-columns: 1fr 8fr;
-    height: 100vh;
+    min-height: 100vh;
 }
-aside {
-    background-color: #202020;
+/*Barra Lateral*/
+aside.perfil-aside {
+    background-color: #0f0f0f;
 }
-aside h3 {
+aside.perfil-aside h3 {
     text-align: center;
-    color: #777474;
+    color: var(--textosP);
+    text-transform: uppercase;
 }
-aside hr {
+aside.perfil-aside hr {
     width: 70%;
     border: 0; 
     height: 1px; 
     background-color: #777474;
 }
-nav.navegacao {
+nav.perfil-navegacao {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -47,14 +118,13 @@ div.nav-item {
     transition: all 0.3s ease;
     color: #575656;
 }
+div.nav-item.ativo {
+    background-color: var(--verdeTransparente);
+    color: white;
+    border-left: 3px solid var(--verdeClaro);
+}
 div.nav-item:hover {
-    background-color: #302e2e;
+    background-color: var(--verdeTransparente);
     color: white;
     cursor: pointer;
-}
-section {
-    background-color: #0f0f0f;
-}
-footer {
-    background-color: #0f0f0f;
 }
