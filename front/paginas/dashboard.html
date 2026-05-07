@@ -1,0 +1,56 @@
+<section class="dashboard">
+    <div class="cards-financeiros">
+        <div class="card-financeiro saldo">
+            <span>Saldo Total</span>
+            <h2 id="saldo-total">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro receitas">
+            <span>Receitas</span>
+            <h2 id="receitas-total">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro despesas">
+            <span>Despesas</span>
+            <h2 id="despesas-total">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro investimentos">
+            <span>Investimentos</span>
+            <h2 id="investimentos-total">R$ 0,00</h2>
+        </div>
+    </div>
+    <div class="dashboard-grid">
+        <div class="dashboard-box">
+            <h3>Fluxo Financeiro</h3>
+            <canvas id="graficoFluxo"></canvas>
+        </div>
+        <div class="dashboard-box">
+            <h3>Gastos por Categoria</h3>
+            <canvas id="graficoCategorias"></canvas>
+        </div>
+    </div>
+    <div class="dashboard-box">
+        <h3>Nova Transação</h3>
+        <form id="form-transacao">
+            <div class="grupo-form">
+                <input type="number" name="valor" id="valor" placeholder="Valor" required>
+            </div>
+            <div class="grupo-form">
+                <select id="tipo">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+                <select id="categoria">
+                    <option value="salario">Salário</option>
+                </select>
+            </div>
+            <button type="submit">Adicionar Transação</button>
+        </form>
+    </div>
+    <div class="dashboard-box">
+        <h3>Últimas Transações</h3>
+        <div id="ultimas-transacoes"></div>
+    </div>
+    <div class="dashboard-box">
+        <h3>Alertas</h3>
+        <div id="alertas-financeiros"></div>
+    </div>
+</section>

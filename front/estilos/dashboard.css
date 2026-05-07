@@ -1,0 +1,181 @@
+section.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+}
+
+div.cards-financeiros {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+div.card-financeiro {
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+div.card-financeiro:hover {
+    transform: translateY(-3px);
+    border-color: var(--roxoClaro);
+}
+
+div.card-financeiro span {
+    color: #888;
+    font-size: 13px;
+}
+
+div.card-financeiro h2 {
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+div.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+div.dashboard-box {
+    background: #111;
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+form#form-transacao {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+div.grupo-form {
+    display: flex;
+    gap: 15px;
+}
+
+div.grupo-form input,
+div.grupo-form select {
+
+    flex: 1;
+
+    background: #0d0d0d;
+
+    border: 1px solid rgba(255,255,255,0.05);
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    color: white;
+
+    outline: none;
+
+}
+
+form#form-transacao button {
+
+    background: var(--roxo);
+
+    border: none;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    color: white;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+form#form-transacao button:hover {
+
+    background: var(--roxoClaro);
+
+}
+
+div.transacao-acoes {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+button.btn-remover {
+
+    background: rgba(255, 0, 0, 0.1);
+
+    border: none;
+
+    color: #ff4d6d;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+button.btn-remover:hover {
+
+    background: rgba(255, 0, 0, 0.2);
+
+}
+
+div.transacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 15px 0;
+
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+div.transacao-info {
+    display: flex;
+    flex-direction: column;
+}
+
+div.transacao-info span {
+    color: #777;
+    font-size: 13px;
+}
+
+div.transacao-valor.receita {
+    color: #00ff88;
+    font-weight: bold;
+}
+
+div.transacao-valor.despesa {
+    color: #ff4d6d;
+    font-weight: bold;
+}
+
+div.alerta {
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+div.alerta.erro {
+    background: rgba(255, 0, 0, 0.1);
+    color: #ff4d6d;
+}
+
+div.alerta.aviso {
+    background: rgba(255, 166, 0, 0.1);
+    color: orange;
+}
