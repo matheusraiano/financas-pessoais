@@ -1,21 +1,16 @@
 {
-  "name": "financas-pessoais",
+  "name": "back",
   "version": "1.0.0",
-  "description": "Um projeto para controle de finanças",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/matheusraiano/financas-pessoais.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/matheusraiano/financas-pessoais/issues"
-  },
-  "homepage": "https://github.com/matheusraiano/financas-pessoais#readme"
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
