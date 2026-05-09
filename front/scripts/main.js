@@ -73,10 +73,12 @@ function limparPaginaAtual() {
 // INICIALIZA SCRIPT DA PÁGINA
 //
 function inicializarScriptsPagina(pagina) {
+
     const init = paginas[pagina];
 
     if (typeof init === 'function') {
-        init();
+
+        init(cleanupFunctions);
     }
 }
 //
