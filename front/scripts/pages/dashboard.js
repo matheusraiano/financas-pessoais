@@ -1,5 +1,6 @@
 import { popularSelectCategorias, criarCategoria } from '../services/categorias.js';
 import { inicializarGraficos } from '../services/graficos.js';
+import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 
 const API = 'http://localhost:3000/api';
 let transacaoAtualId = null;
@@ -7,56 +8,65 @@ let transacaoAtualId = null;
 export async function inicializarDashboard(cleanupFunctions) {
     console.log('Dashboard carregado');
 
-    await carregarResumo();
-    await carregarTransacoes();
-    await inicializarGraficos();
+    // limpa listeners antigos antes de registrar novos
+    removerListeners();
+
+    inicializarCalendario();
+    await atualizarTudo();
+
+    // registra listener — quando mudar período atualiza tudo
+    onPeriodoMudou(async () => await atualizarTudo());
+
+    // cleanup quando sair da página
+    cleanupFunctions.push(() => removerListeners());
 
     const selectTipo = document.getElementById('tipo');
     const selectCategoria = document.getElementById('categoria');
-
-    // popula categorias conforme o tipo selecionado
     await popularSelectCategorias(selectCategoria, selectTipo.value);
+
     selectTipo.addEventListener('change', () => {
         popularSelectCategorias(selectCategoria, selectTipo.value);
     });
 
-    // form nova transação
     document.getElementById('form-transacao').addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const { ano, mes } = getPeriodo();
+
+        // monta a data com o mês/ano selecionado + dia atual
+        const dia = new Date().getDate();
+        const dataTransacao = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+
         await fetch(`${API}/transacoes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 valor: document.getElementById('valor').value,
                 tipo: selectTipo.value,
-                categoria: selectCategoria.value
+                categoria: selectCategoria.value,
+                data: dataTransacao
             })
         });
         e.target.reset();
         await popularSelectCategorias(selectCategoria, selectTipo.value);
-        await carregarResumo();
-        await carregarTransacoes();
-        await inicializarGraficos();
+        await atualizarTudo();
     });
 
-    // form nova categoria
     document.getElementById('form-categoria').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const nome = document.getElementById('cat-nome').value;
-        const tipo = document.getElementById('cat-tipo').value;
-        await criarCategoria(nome, tipo);
+        await criarCategoria(
+            document.getElementById('cat-nome').value,
+            document.getElementById('cat-tipo').value
+        );
         e.target.reset();
-        // atualiza o select de categoria já aberto
         await popularSelectCategorias(selectCategoria, selectTipo.value);
     });
 
-    // modal
     document.getElementById('btn-fechar').addEventListener('click', fecharModal);
     document.getElementById('modal-transacao').addEventListener('click', (e) => {
         if (e.target.id === 'modal-transacao') fecharModal();
     });
 
-    // editar — atualiza categorias quando muda o tipo no modal também
     const editTipo = document.getElementById('edit-tipo');
     editTipo.addEventListener('change', () => {
         popularSelectCategorias(document.getElementById('edit-categoria'), editTipo.value);
@@ -74,9 +84,7 @@ export async function inicializarDashboard(cleanupFunctions) {
             })
         });
         fecharModal();
-        await carregarResumo();
-        await carregarTransacoes();
-        await inicializarGraficos();
+        await atualizarTudo();
     });
 
     document.getElementById('btn-deletar').addEventListener('click', async () => {
@@ -88,26 +96,26 @@ export async function inicializarDashboard(cleanupFunctions) {
             await new Promise(r => setTimeout(r, 400));
         }
         await fetch(`${API}/transacoes/${idParaDeletar}`, { method: 'DELETE' });
-        await carregarResumo();
-        await carregarTransacoes();
-        await inicializarGraficos();
+        await atualizarTudo();
     });
+}
+
+async function atualizarTudo() {
+    const { ano, mes } = getPeriodo();
+    await carregarResumo(ano, mes);
+    await carregarTransacoes(ano, mes);
+    await inicializarGraficos(ano, mes);
 }
 
 async function abrirModal(transacao) {
     transacaoAtualId = transacao.id;
-
     const dataEdicao = transacao.data_edicao ? ` (editado em ${transacao.data_edicao})` : '';
     document.getElementById('modal-titulo').textContent = `Transação — ${transacao.data}${dataEdicao}`;
-
     document.getElementById('edit-valor').value = transacao.valor;
     document.getElementById('edit-tipo').value = transacao.tipo;
-
-    // popula categorias do tipo correto e seleciona a atual
     const editCategoria = document.getElementById('edit-categoria');
     await popularSelectCategorias(editCategoria, transacao.tipo);
     editCategoria.value = transacao.categoria;
-
     document.getElementById('modal-transacao').style.display = 'flex';
 }
 
@@ -116,9 +124,9 @@ function fecharModal() {
     transacaoAtualId = null;
 }
 
-async function carregarResumo() {
+async function carregarResumo(ano, mes) {
     try {
-        const res = await fetch(`${API}/transacoes/resumo`);
+        const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`);
         const { saldo, receitas, despesas } = await res.json();
         document.getElementById('saldo-total').textContent = formatar(saldo);
         document.getElementById('receitas-total').textContent = formatar(receitas);
@@ -128,9 +136,9 @@ async function carregarResumo() {
     }
 }
 
-async function carregarTransacoes() {
+async function carregarTransacoes(ano, mes) {
     try {
-        const res = await fetch(`${API}/transacoes`);
+        const res = await fetch(`${API}/transacoes?ano=${ano}&mes=${mes}`);
         const transacoes = await res.json();
         const container = document.getElementById('ultimas-transacoes');
         container.innerHTML = '';
@@ -139,11 +147,9 @@ async function carregarTransacoes() {
             const div = document.createElement('div');
             div.className = 'transacao';
             div.dataset.id = t.id;
-
             const dataEdicao = t.data_edicao
                 ? ` <span class="data-edicao">(editado em ${t.data_edicao})</span>`
                 : '';
-
             div.innerHTML = `
                 <div class="transacao-info">
                     <strong>${t.categoria}</strong>
@@ -153,7 +159,6 @@ async function carregarTransacoes() {
                     ${t.tipo === 'receita' ? '+' : '-'} ${formatar(t.valor)}
                 </div>
             `;
-
             div.addEventListener('click', () => abrirModal(t));
             container.appendChild(div);
         });

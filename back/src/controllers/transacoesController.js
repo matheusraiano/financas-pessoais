@@ -1,19 +1,46 @@
 import pool from '../database/connection.js';
 
+// helper para montar o filtro de data
+function filtroData(ano, mes) {
+    return {
+        sql: 'YEAR(data) = ? AND MONTH(data) = ?',
+        params: [ano, mes]
+    };
+}
+
 export async function listar(req, res) {
+    const { ano, mes } = req.query;
+
+    if (!ano || !mes) {
+        return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+    }
+
+    const filtro = filtroData(ano, mes);
+
     const [rows] = await pool.query(
-        'SELECT * FROM transacoes ORDER BY data DESC'
+        `SELECT * FROM transacoes WHERE ${filtro.sql} ORDER BY data DESC`,
+        filtro.params
     );
+
     res.json(rows);
 }
 
 export async function resumo(req, res) {
+    const { ano, mes } = req.query;
+
+    if (!ano || !mes) {
+        return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+    }
+
+    const filtro = filtroData(ano, mes);
+
     const [rows] = await pool.query(`
         SELECT
             SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END) AS receitas,
             SUM(CASE WHEN tipo = 'despesa' THEN valor ELSE 0 END) AS despesas
         FROM transacoes
-    `);
+        WHERE ${filtro.sql}
+    `, filtro.params);
 
     const { receitas, despesas } = rows[0];
     res.json({
@@ -24,20 +51,42 @@ export async function resumo(req, res) {
 }
 
 export async function criar(req, res) {
-    const { descricao, valor, tipo, categoria } = req.body;
+    const { valor, tipo, categoria, data } = req.body;
 
     if (!valor || !tipo) {
         return res.status(400).json({ erro: 'Valor e tipo são obrigatórios' });
     }
 
-    const data = new Date().toISOString().split('T')[0];
+    // usa a data enviada pelo frontend, ou hoje como fallback
+    const dataFinal = data || new Date().toISOString().split('T')[0];
 
     const [result] = await pool.query(
-        'INSERT INTO transacoes (descricao, valor, tipo, categoria, data) VALUES (?, ?, ?, ?, ?)',
-        [descricao || '', valor, tipo, categoria || 'outros', data]
+        'INSERT INTO transacoes (valor, tipo, categoria, data) VALUES (?, ?, ?, ?)',
+        [valor, tipo, categoria || 'outros', dataFinal]
     );
 
-    res.status(201).json({ id: result.insertId, descricao, valor, tipo, categoria, data });
+    res.status(201).json({ id: result.insertId, valor, tipo, categoria, data: dataFinal });
+}
+
+export async function atualizar(req, res) {
+    const { valor, tipo, categoria } = req.body;
+
+    if (!valor || !tipo) {
+        return res.status(400).json({ erro: 'Valor e tipo são obrigatórios' });
+    }
+
+    const dataEdicao = new Date().toISOString().split('T')[0];
+
+    const [result] = await pool.query(
+        `UPDATE transacoes SET valor = ?, tipo = ?, categoria = ?, data_edicao = ? WHERE id = ?`,
+        [valor, tipo, categoria, dataEdicao, req.params.id]
+    );
+
+    if (result.affectedRows === 0) {
+        return res.status(404).json({ erro: 'Transação não encontrada' });
+    }
+
+    res.json({ id: req.params.id, valor, tipo, categoria, dataEdicao });
 }
 
 export async function deletar(req, res) {
@@ -51,29 +100,6 @@ export async function deletar(req, res) {
     }
 
     res.status(204).send();
-}
-
-export async function atualizar(req, res) {
-    const { descricao, valor, tipo, categoria } = req.body;
-
-    if (!valor || !tipo) {
-        return res.status(400).json({ erro: 'Valor e tipo são obrigatórios' });
-    }
-
-    const dataEdicao = new Date().toISOString().split('T')[0];
-
-    const [result] = await pool.query(
-        `UPDATE transacoes 
-         SET descricao = ?, valor = ?, tipo = ?, categoria = ?, data_edicao = ?
-         WHERE id = ?`,
-        [descricao, valor, tipo, categoria, dataEdicao, req.params.id]
-    );
-
-    if (result.affectedRows === 0) {
-        return res.status(404).json({ erro: 'Transação não encontrada' });
-    }
-
-    res.json({ id: req.params.id, descricao, valor, tipo, categoria, dataEdicao });
 }
 
 export async function fluxoPorMes(req, res) {
@@ -91,14 +117,21 @@ export async function fluxoPorMes(req, res) {
 }
 
 export async function gastosPorCategoria(req, res) {
+    const { ano, mes } = req.query;
+
+    if (!ano || !mes) {
+        return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+    }
+
+    const filtro = filtroData(ano, mes);
+
     const [rows] = await pool.query(`
-        SELECT 
-            categoria,
-            SUM(valor) AS total
+        SELECT categoria, SUM(valor) AS total
         FROM transacoes
-        WHERE tipo = 'despesa'
+        WHERE tipo = 'despesa' AND ${filtro.sql}
         GROUP BY categoria
         ORDER BY total DESC
-    `);
+    `, filtro.params);
+
     res.json(rows);
 }

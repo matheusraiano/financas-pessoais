@@ -281,3 +281,76 @@ span.data-edicao {
     font-size: 11px;
     font-style: italic;
 }
+
+/**/
+/*CALENDÁRIO DE PERÍODO*/
+/**/
+
+.calendario-periodo {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.calendario-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.calendario-header span {
+    font-size: 16px;
+    font-weight: 600;
+    color: white;
+    min-width: 50px;
+    text-align: center;
+}
+
+.cal-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #aaa;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cal-btn:hover {
+    border-color: var(--roxoClaro);
+    color: white;
+}
+
+.calendario-meses {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.cal-mes {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #888;
+    padding: 8px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.cal-mes:hover {
+    border-color: var(--roxoClaro);
+    color: white;
+}
+
+.cal-mes.ativo {
+    background: var(--roxoTransparente);
+    border-color: var(--roxoClaro);
+    color: white;
+    font-weight: 600;
+}
