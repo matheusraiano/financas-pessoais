@@ -1,0 +1,110 @@
+/**/
+/*EXTRATO*/
+/**/
+
+section.extrato {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+}
+
+/**/
+/*RESUMO*/
+/**/
+
+.extrato-resumo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/**/
+/*FILTROS*/
+/**/
+
+.extrato-filtros {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.filtro-grupo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filtro-grupo label {
+    color: #888;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.filtro-botoes {
+    display: flex;
+    gap: 8px;
+}
+
+.filtro-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #888;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.filtro-btn:hover {
+    border-color: var(--roxoClaro);
+    color: white;
+}
+
+.filtro-btn.ativo {
+    background: var(--roxoTransparente);
+    border-color: var(--roxoClaro);
+    color: white;
+}
+
+#filtro-categoria {
+    background: #0d0d0d;
+    border: 1px solid rgba(255,255,255,0.07);
+    color: white;
+    padding: 7px 14px;
+    border-radius: 8px;
+    outline: none;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/**/
+/*HEADER DA LISTA*/
+/**/
+
+.extrato-header-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.extrato-header-lista h3 {
+    margin: 0;
+}
+
+.extrato-header-lista span {
+    color: #666;
+    font-size: 13px;
+}
+
+/**/
+/*VAZIO*/
+/**/
+
+.extrato-vazio {
+    color: #555;
+    text-align: center;
+    padding: 30px 0;
+}

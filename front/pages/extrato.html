@@ -1,0 +1,45 @@
+<section class="extrato">
+    <div class="dashboard-box">
+        <div id="seletor-periodo-extrato"></div>
+    </div>
+
+    <div class="extrato-filtros dashboard-box">
+        <div class="filtro-grupo">
+            <label>Tipo</label>
+            <div class="filtro-botoes">
+                <button class="filtro-btn ativo" data-tipo="todos">Todos</button>
+                <button class="filtro-btn" data-tipo="receita">Receitas</button>
+                <button class="filtro-btn" data-tipo="despesa">Despesas</button>
+            </div>
+        </div>
+        <div class="filtro-grupo">
+            <label>Categoria</label>
+            <select id="filtro-categoria">
+                <option value="todos">Todas</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="extrato-resumo">
+        <div class="card-financeiro">
+            <span>Receitas do mês</span>
+            <h2 id="ext-receitas">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro">
+            <span>Despesas do mês</span>
+            <h2 id="ext-despesas">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro">
+            <span>Saldo do mês</span>
+            <h2 id="ext-saldo">R$ 0,00</h2>
+        </div>
+    </div>
+
+    <div class="dashboard-box">
+        <div class="extrato-header-lista">
+            <h3>Transações</h3>
+            <span id="ext-contador">0 transações</span>
+        </div>
+        <div id="lista-extrato"></div>
+    </div>
+</section>

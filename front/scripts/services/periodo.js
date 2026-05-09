@@ -20,8 +20,8 @@ function notificar() {
     listeners.forEach(fn => fn({ ano: anoAtual, mes: mesAtual }));
 }
 
-export function inicializarCalendario() {
-    const container = document.getElementById('seletor-periodo');
+export function inicializarCalendario(containerId = 'seletor-periodo') {
+    const container = document.getElementById(containerId);
     if (!container) return;
     renderizarCalendario(container);
 }

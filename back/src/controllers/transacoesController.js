@@ -9,19 +9,28 @@ function filtroData(ano, mes) {
 }
 
 export async function listar(req, res) {
-    const { ano, mes } = req.query;
+    const { ano, mes, tipo, categoria } = req.query;
 
     if (!ano || !mes) {
         return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
     }
 
-    const filtro = filtroData(ano, mes);
+    let sql = 'SELECT * FROM transacoes WHERE YEAR(data) = ? AND MONTH(data) = ?';
+    const params = [ano, mes];
 
-    const [rows] = await pool.query(
-        `SELECT * FROM transacoes WHERE ${filtro.sql} ORDER BY data DESC`,
-        filtro.params
-    );
+    if (tipo && tipo !== 'todos') {
+        sql += ' AND tipo = ?';
+        params.push(tipo);
+    }
 
+    if (categoria && categoria !== 'todos') {
+        sql += ' AND categoria = ?';
+        params.push(categoria);
+    }
+
+    sql += ' ORDER BY data DESC';
+
+    const [rows] = await pool.query(sql, params);
     res.json(rows);
 }
 
