@@ -75,3 +75,30 @@ export async function atualizar(req, res) {
 
     res.json({ id: req.params.id, descricao, valor, tipo, categoria, dataEdicao });
 }
+
+export async function fluxoPorMes(req, res) {
+    const [rows] = await pool.query(`
+        SELECT 
+            DATE_FORMAT(data, '%Y-%m') AS mes,
+            SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END) AS receitas,
+            SUM(CASE WHEN tipo = 'despesa' THEN valor ELSE 0 END) AS despesas
+        FROM transacoes
+        GROUP BY mes
+        ORDER BY mes ASC
+        LIMIT 12
+    `);
+    res.json(rows);
+}
+
+export async function gastosPorCategoria(req, res) {
+    const [rows] = await pool.query(`
+        SELECT 
+            categoria,
+            SUM(valor) AS total
+        FROM transacoes
+        WHERE tipo = 'despesa'
+        GROUP BY categoria
+        ORDER BY total DESC
+    `);
+    res.json(rows);
+}

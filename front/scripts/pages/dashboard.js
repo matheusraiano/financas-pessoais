@@ -1,4 +1,5 @@
 import { popularSelectCategorias, criarCategoria } from '../services/categorias.js';
+import { inicializarGraficos } from '../services/graficos.js';
 
 const API = 'http://localhost:3000/api';
 let transacaoAtualId = null;
@@ -8,6 +9,7 @@ export async function inicializarDashboard(cleanupFunctions) {
 
     await carregarResumo();
     await carregarTransacoes();
+    await inicializarGraficos();
 
     const selectTipo = document.getElementById('tipo');
     const selectCategoria = document.getElementById('categoria');
@@ -34,6 +36,7 @@ export async function inicializarDashboard(cleanupFunctions) {
         await popularSelectCategorias(selectCategoria, selectTipo.value);
         await carregarResumo();
         await carregarTransacoes();
+        await inicializarGraficos();
     });
 
     // form nova categoria
@@ -73,6 +76,7 @@ export async function inicializarDashboard(cleanupFunctions) {
         fecharModal();
         await carregarResumo();
         await carregarTransacoes();
+        await inicializarGraficos();
     });
 
     document.getElementById('btn-deletar').addEventListener('click', async () => {
@@ -86,6 +90,7 @@ export async function inicializarDashboard(cleanupFunctions) {
         await fetch(`${API}/transacoes/${idParaDeletar}`, { method: 'DELETE' });
         await carregarResumo();
         await carregarTransacoes();
+        await inicializarGraficos();
     });
 }
 
