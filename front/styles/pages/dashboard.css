@@ -75,6 +75,12 @@ form#form-transacao {
     gap: 15px;
 }
 
+form#form-categoria {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
 div.grupo-form {
     display: flex;
     gap: 15px;
@@ -95,7 +101,8 @@ div.grupo-form select {
 /*BOTÃO DE TRANSAÇÃO*/
 /**/
 
-form#form-transacao button {
+form#form-transacao button,
+form#form-categoria button {
     background: var(--roxo);
     border: none;
     padding: 14px;
@@ -106,7 +113,8 @@ form#form-transacao button {
     transition: 0.3s;
 }
 
-form#form-transacao button:hover {
+form#form-transacao button:hover,
+form#form-categoria button:hover {
     background: var(--roxoClaro);
 }
 
@@ -142,4 +150,134 @@ div.transacao-valor.receita {
 div.transacao-valor.despesa {
     color: #ff4d6d;
     font-weight: bold;
+}
+
+/**/
+/*MODAL*/
+/**/
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: slideUp 0.25s ease;
+}
+
+.modal-box h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.modal-botoes {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-salvar {
+    flex: 1;
+    background: var(--roxo);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-salvar:hover {
+    background: var(--roxoClaro);
+}
+
+.btn-deletar {
+    flex: 1;
+    background: transparent;
+    border: 1px solid #ff4d6d;
+    padding: 12px;
+    border-radius: 10px;
+    color: #ff4d6d;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-deletar:hover {
+    background: #ff4d6d;
+    color: white;
+}
+
+.btn-fechar {
+    flex: 1;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    border-radius: 10px;
+    color: #888;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-fechar:hover {
+    border-color: #888;
+    color: white;
+}
+
+/*ANIMAÇÕES*/
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+/*SAÍDA DA TRANSAÇÃO*/
+
+div.transacao {
+    transition: all 0.4s ease;
+}
+
+div.transacao.saindo {
+    opacity: 0;
+    transform: translateX(40px);
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/*CURSOR NAS TRANSAÇÕES*/
+
+div.transacao {
+    cursor: pointer;
+}
+
+div.transacao:hover {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding-left: 8px;
+}
+
+span.data-edicao {
+    color: #666;
+    font-size: 11px;
+    font-style: italic;
 }

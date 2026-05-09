@@ -38,15 +38,50 @@
                     <option value="receita">Receita</option>
                     <option value="despesa">Despesa</option>
                 </select>
-                <select id="categoria">
-                    <option value="salario">Salário</option>
-                </select>
+                <select id="categoria"></select>
             </div>
             <button type="submit">Adicionar Transação</button>
+        </form>
+    </div>
+    <div class="dashboard-box">
+        <h3>Nova Categoria</h3>
+        <form id="form-categoria">
+            <div class="grupo-form">
+                <input type="text" id="cat-nome" placeholder="Nome da categoria" required>
+                <select id="cat-tipo">
+                    <option value="ambos">Receita e Despesa</option>
+                    <option value="receita">Só Receita</option>
+                    <option value="despesa">Só Despesa</option>
+                </select>
+            </div>
+            <button type="submit">Criar Categoria</button>
         </form>
     </div>
     <div class="dashboard-box">
         <h3>Últimas Transações</h3>
         <div id="ultimas-transacoes"></div>
     </div>
+    <div id="modal-transacao" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h3 id="modal-titulo">Transação</h3>
+        <form id="form-edicao">
+            <div class="grupo-form">
+                <input type="number" id="edit-valor" placeholder="Valor" required>
+            </div>
+            <div class="grupo-form">
+                <select id="edit-tipo">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+                <select id="edit-categoria"></select>
+            </div>
+            <div class="modal-botoes">
+                <button type="submit" class="btn-salvar">Salvar</button>
+                <button type="button" id="btn-deletar" class="btn-deletar">Deletar</button>
+                <button type="button" id="btn-fechar" class="btn-fechar">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
 </section>
