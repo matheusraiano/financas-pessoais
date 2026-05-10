@@ -4,8 +4,8 @@ let graficoFluxo = null;
 let graficoCategorias = null;
 
 const coresPizza = [
-    '#8b00ff', '#a020f0', '#c23fc2', '#d855d8',
-    '#e070e0', '#6600cc', '#9900ff', '#bb44bb'
+    '#ff4d6d', '#ff6b6b', '#ff8585', '#cc0033',
+    '#e63950', '#ff1a40', '#b30000', '#ff9999'
 ];
 
 let graficoReceitasCategorias = null;
