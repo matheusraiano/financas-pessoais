@@ -66,15 +66,21 @@ export async function criar(req, res) {
         return res.status(400).json({ erro: 'Valor e tipo são obrigatórios' });
     }
 
-    // usa a data enviada pelo frontend, ou hoje como fallback
+    // garante número com ponto decimal
+    const valorNumerico = parseFloat(String(valor).replace(',', '.'));
+
+    if (isNaN(valorNumerico) || valorNumerico <= 0) {
+        return res.status(400).json({ erro: 'Valor inválido' });
+    }
+
     const dataFinal = data || new Date().toISOString().split('T')[0];
 
     const [result] = await pool.query(
         'INSERT INTO transacoes (valor, tipo, categoria, data) VALUES (?, ?, ?, ?)',
-        [valor, tipo, categoria || 'outros', dataFinal]
+        [valorNumerico, tipo, categoria || 'outros', dataFinal]
     );
 
-    res.status(201).json({ id: result.insertId, valor, tipo, categoria, data: dataFinal });
+    res.status(201).json({ id: result.insertId, valor: valorNumerico, tipo, categoria, data: dataFinal });
 }
 
 export async function atualizar(req, res) {

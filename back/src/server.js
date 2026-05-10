@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import transacoesRouter from './routes/transacoes.js';
 import categoriasRouter from './routes/categorias.js';
