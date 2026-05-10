@@ -1,5 +1,6 @@
 let anoAtual = new Date().getFullYear();
 let mesAtual = new Date().getMonth() + 1;
+let containerAtivo = null; // referência do container atual
 
 const listeners = [];
 
@@ -8,7 +9,6 @@ export function getPeriodo() {
 }
 
 export function onPeriodoMudou(fn) {
-    // evita duplicar o mesmo listener ao recarregar a página
     if (!listeners.includes(fn)) listeners.push(fn);
 }
 
@@ -23,6 +23,7 @@ function notificar() {
 export function inicializarCalendario(containerId = 'seletor-periodo') {
     const container = document.getElementById(containerId);
     if (!container) return;
+    containerAtivo = container; // salva referência
     renderizarCalendario(container);
 }
 
@@ -54,14 +55,14 @@ function renderizarCalendario(container) {
         </div>
     `;
 
-    document.getElementById('cal-ano-anterior').addEventListener('click', () => {
+    container.querySelector('#cal-ano-anterior').addEventListener('click', () => {
         if (anoAtual <= anoMin) return;
         anoAtual--;
         atualizarDisplay();
         notificar();
     });
 
-    document.getElementById('cal-ano-proximo').addEventListener('click', () => {
+    container.querySelector('#cal-ano-proximo').addEventListener('click', () => {
         if (anoAtual >= anoMax) return;
         anoAtual++;
         atualizarDisplay();
@@ -78,8 +79,13 @@ function renderizarCalendario(container) {
 }
 
 function atualizarDisplay() {
-    document.getElementById('cal-ano-display').textContent = anoAtual;
-    document.querySelectorAll('.cal-mes').forEach(btn => {
+    if (!containerAtivo) return;
+
+    // busca APENAS dentro do container ativo
+    const display = containerAtivo.querySelector('#cal-ano-display');
+    if (display) display.textContent = anoAtual;
+
+    containerAtivo.querySelectorAll('.cal-mes').forEach(btn => {
         btn.classList.toggle('ativo', Number(btn.dataset.mes) === mesAtual);
     });
 }

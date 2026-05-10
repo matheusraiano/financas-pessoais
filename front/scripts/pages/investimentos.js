@@ -1,4 +1,6 @@
-const API = 'http://localhost:3000/api';
+import { formatarData } from '../services/utils.js';
+
+import { API } from '../services/config.js';
 let filtroTipo = 'todos';
 
 export async function inicializarInvestimentos(cleanupFunctions) {
@@ -92,7 +94,7 @@ async function carregarAtivos() {
                 <div class="card-ativo-detalhes">
                     <span>${a.num_aportes} aporte${a.num_aportes > 1 ? 's' : ''}</span>
                     ${a.total_cotas ? `<span>${Number(a.total_cotas).toFixed(4)} cotas</span>` : ''}
-                    <span>Desde ${new Date(a.primeiro_aporte).toLocaleDateString('pt-BR')}</span>
+                    <span>Desde ${formatarData(a.primeiro_aporte)}</span>
                 </div>
             `;
             container.appendChild(div);
@@ -125,7 +127,7 @@ async function carregarAportes() {
             div.innerHTML = `
                 <div class="transacao-info">
                     <strong>${a.nome}</strong>
-                    <span>${new Date(a.data).toLocaleDateString('pt-BR')}
+                    <span>${formatarData(a.data)}
                         ${a.cotas ? ` · ${Number(a.cotas).toFixed(4)} cotas` : ''}
                         · <span class="badge-operacao ${a.operacao}">${a.operacao === 'aporte' ? 'Aporte' : 'Retirada'}</span>
                     </span>

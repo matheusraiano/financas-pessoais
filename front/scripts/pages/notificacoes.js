@@ -1,7 +1,8 @@
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { popularSelectCategorias } from '../services/categorias.js';
+import { formatarData } from '../services/utils.js';
 
-const API = 'http://localhost:3000/api';
+import { API } from '../services/config.js';
 
 export async function inicializarNotificacoes(cleanupFunctions) {
     console.log('Notificações carregado');
@@ -105,7 +106,7 @@ function renderizarNotificacoes(notificacoes) {
             <div class="notif-icone">${n.tipo === 'alerta' ? '⚠️' : '🎯'}</div>
             <div class="notif-corpo">
                 <p>${n.mensagem}</p>
-                <span>${new Date(n.criada_em).toLocaleDateString('pt-BR')}</span>
+                <span>${formatarData(n.criada_em)}</span>
             </div>
             ${!n.lida ? `<button class="btn-lida" data-id="${n.id}">✓</button>` : ''}
         `;

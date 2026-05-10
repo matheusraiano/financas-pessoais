@@ -1,7 +1,8 @@
 import { inicializarModal, abrirModal } from '../services/modal.js';
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
+import { formatarData } from '../services/utils.js';
 
-const API = 'http://localhost:3000/api';
+import { API } from '../services/config.js';
 
 let filtroTipo = 'todos';
 let filtroCategoria = 'todos';
@@ -86,7 +87,7 @@ async function carregarTransacoes(ano, mes) {
             div.innerHTML = `
                 <div class="transacao-info">
                     <strong>${t.categoria}</strong>
-                    <span>${t.data}${dataEdicao}</span>
+                    <span>${formatarData(t.data)}${dataEdicao}</span>
                 </div>
                 <div class="transacao-valor ${t.tipo}">
                     ${t.tipo === 'receita' ? '+' : '-'} ${formatar(t.valor)}

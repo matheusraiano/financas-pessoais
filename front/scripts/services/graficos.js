@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+import { API } from './config.js';
 
 let graficoFluxo = null;
 let graficoCategorias = null;

@@ -1,4 +1,4 @@
-const API = 'http://localhost:3000/api';
+import { API } from './config.js';
 
 // busca categorias e popula um <select> filtrando pelo tipo selecionado
 export async function popularSelectCategorias(selectEl, tipoAtual) {

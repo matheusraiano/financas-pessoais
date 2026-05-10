@@ -2,8 +2,9 @@ import { popularSelectCategorias, criarCategoria } from '../services/categorias.
 import { inicializarGraficos } from '../services/graficos.js';
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { inicializarModal, abrirModal } from '../services/modal.js';
+import { formatarData } from '../services/utils.js';
 
-const API = 'http://localhost:3000/api';
+import { API } from '../services/config.js';
 
 export async function inicializarDashboard(cleanupFunctions) {
     console.log('Dashboard carregado');
@@ -109,7 +110,7 @@ async function carregarTransacoes(ano, mes) {
             div.innerHTML = `
                 <div class="transacao-info">
                     <strong>${t.categoria}</strong>
-                    <span>${t.data}${dataEdicao}</span>
+                    <span>${formatarData(t.data)}${dataEdicao}</span>
                 </div>
                 <div class="transacao-valor ${t.tipo}">
                     ${t.tipo === 'receita' ? '+' : '-'} ${formatar(t.valor)}

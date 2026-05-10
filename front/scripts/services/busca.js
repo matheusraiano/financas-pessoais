@@ -1,4 +1,6 @@
-const API = 'http://localhost:3000/api';
+import { formatarData } from '../services/utils.js';
+
+import { API } from './config.js';
 
 export function inicializarBusca() {
     const input = document.querySelector('.header-center input');
@@ -58,7 +60,7 @@ async function executarBusca(termo) {
                     <div class="busca-item">
                         <div class="busca-item-info">
                             <strong>${t.categoria}</strong>
-                            <span>${new Date(t.data).toLocaleDateString('pt-BR')}</span>
+                            <span>${formatarData(t.data)}</span>
                         </div>
                         <span class="transacao-valor ${t.tipo}">
                             ${t.tipo === 'receita' ? '+' : '-'} ${formatar(t.valor)}
@@ -75,7 +77,7 @@ async function executarBusca(termo) {
                     <div class="busca-item">
                         <div class="busca-item-info">
                             <strong>${i.nome}</strong>
-                            <span>${new Date(i.data).toLocaleDateString('pt-BR')} · ${i.operacao}</span>
+                            <span>${formatarData(i.data)} · ${i.operacao}</span>
                         </div>
                         <span class="transacao-valor receita">+ ${formatar(i.valor)}</span>
                     </div>

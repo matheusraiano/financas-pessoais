@@ -1,6 +1,7 @@
 import { popularSelectCategorias } from './categorias.js';
+import { formatarData } from '../services/utils.js';
 
-const API = 'http://localhost:3000/api';
+import { API } from './config.js';
 let transacaoAtualId = null;
 let onSalvar = null;
 let onDeletar = null;
@@ -81,7 +82,7 @@ export async function abrirModal(transacao, callbacks = {}) {
     transacaoAtualId = transacao.id;
 
     const dataEdicao = transacao.data_edicao ? ` (editado em ${transacao.data_edicao})` : '';
-    document.getElementById('modal-titulo').textContent = `Transação — ${transacao.data}${dataEdicao}`;
+    document.getElementById('modal-titulo').textContent = `Transação — ${formatarData(transacao.data)}${dataEdicao}`;
     document.getElementById('edit-valor').value = transacao.valor;
     document.getElementById('edit-tipo').value = transacao.tipo;
 
