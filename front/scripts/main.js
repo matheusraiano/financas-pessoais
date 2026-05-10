@@ -3,6 +3,7 @@ import { inicializarDashboard } from './pages/dashboard.js';
 import { inicializarExtrato } from './pages/extrato.js';
 import { inicializarInvestimentos } from './pages/investimentos.js';
 import { inicializarNotificacoes } from './pages/notificacoes.js';
+import { inicializarBusca } from './services/busca.js';
 //
 // ELEMENTOS PRINCIPAIS
 //
@@ -116,3 +117,4 @@ navItems.forEach(item => {
         item.classList.remove('ativo');
     }
 });
+inicializarBusca();

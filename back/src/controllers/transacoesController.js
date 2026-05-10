@@ -118,16 +118,26 @@ export async function deletar(req, res) {
 }
 
 export async function fluxoPorMes(req, res) {
-    const [rows] = await pool.query(`
+    const { ano } = req.query;
+
+    let sql = `
         SELECT 
             DATE_FORMAT(data, '%Y-%m') AS mes,
             SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END) AS receitas,
             SUM(CASE WHEN tipo = 'despesa' THEN valor ELSE 0 END) AS despesas
         FROM transacoes
-        GROUP BY mes
-        ORDER BY mes ASC
-        LIMIT 12
-    `);
+    `;
+
+    const params = [];
+
+    if (ano) {
+        sql += ' WHERE YEAR(data) = ?';
+        params.push(ano);
+    }
+
+    sql += ' GROUP BY mes ORDER BY mes ASC';
+
+    const [rows] = await pool.query(sql, params);
     res.json(rows);
 }
 
@@ -147,6 +157,24 @@ export async function gastosPorCategoria(req, res) {
         GROUP BY categoria
         ORDER BY total DESC
     `, filtro.params);
+
+    res.json(rows);
+}
+
+export async function receitasPorCategoria(req, res) {
+    const { ano, mes } = req.query;
+
+    if (!ano || !mes) {
+        return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+    }
+
+    const [rows] = await pool.query(`
+        SELECT categoria, SUM(valor) AS total
+        FROM transacoes
+        WHERE tipo = 'receita' AND YEAR(data) = ? AND MONTH(data) = ?
+        GROUP BY categoria
+        ORDER BY total DESC
+    `, [ano, mes]);
 
     res.json(rows);
 }

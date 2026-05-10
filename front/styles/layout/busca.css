@@ -1,0 +1,77 @@
+@import url(../geral.css);
+/**/
+/*MODAL DE BUSCA*/
+/**/
+
+.modal-busca-box {
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 30px;
+    width: 600px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: slideUp 0.25s ease;
+    overflow: hidden;
+}
+
+.busca-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.busca-header h3 {
+    margin: 0;
+}
+
+#busca-resultados {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.busca-grupo-titulo {
+    color: #666;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 12px 0 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.busca-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.busca-item:hover {
+    background: rgba(255,255,255,0.03);
+}
+
+.busca-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.busca-item-info span {
+    color: #666;
+    font-size: 12px;
+}
+
+.busca-carregando,
+.busca-vazio {
+    color: #555;
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+}

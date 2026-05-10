@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS transacoes (
 CREATE TABLE IF NOT EXISTS categorias (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    tipo ENUM('receita', 'despesa', 'ambos') NOT NULL DEFAULT 'ambos'
+    tipo ENUM('receita', 'despesa', 'ambos') NOT NULL DEFAULT 'ambos',
+    ativa BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- algumas categorias padrão
@@ -40,7 +41,9 @@ CREATE TABLE IF NOT EXISTS metas (
     tipo ENUM('categoria', 'economia', 'receita', 'investimento') NOT NULL,
     categoria VARCHAR(100) NULL,        -- só para tipo = 'categoria'
     valor DECIMAL(15,2) NOT NULL,
-    descricao VARCHAR(255)
+    descricao VARCHAR(255),
+    mes INT NOT NULL DEFAULT 5,
+    ano INT NOT NULL DEFAULT 2026
 );
 
 CREATE TABLE IF NOT EXISTS notificacoes (

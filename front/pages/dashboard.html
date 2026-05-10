@@ -29,6 +29,10 @@
             <h3>Gastos por Categoria</h3>
             <canvas id="graficoCategorias"></canvas>
         </div>
+        <div class="dashboard-box">
+            <h3>Receitas por Categoria</h3>
+            <canvas id="graficoReceitasCategorias"></canvas>
+        </div>
     </div>
     <div class="dashboard-box">
         <h3>Nova Transação</h3>
@@ -59,6 +63,8 @@
             </div>
             <button type="submit">Criar Categoria</button>
         </form>
+        <button id="btn-ver-categorias" class="btn-ver-categorias">Ver categorias</button>
+        <div id="lista-categorias" style="display:none; margin-top:16px;"></div>
     </div>
     <div class="dashboard-box">
         <h3>Últimas Transações</h3>

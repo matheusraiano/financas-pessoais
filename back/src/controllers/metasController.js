@@ -1,15 +1,24 @@
 import pool from '../database/connection.js';
 
 export async function listar(req, res) {
-    const [rows] = await pool.query('SELECT * FROM metas ORDER BY id DESC');
+    const { ano, mes } = req.query;
+
+    if (!ano || !mes) {
+        return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+    }
+
+    const [rows] = await pool.query(
+        'SELECT * FROM metas WHERE ano = ? AND mes = ? ORDER BY id DESC',
+        [ano, mes]
+    );
     res.json(rows);
 }
 
 export async function criar(req, res) {
-    const { tipo, categoria, valor, descricao } = req.body;
+    const { tipo, categoria, valor, descricao, ano, mes } = req.body;
 
-    if (!tipo || !valor) {
-        return res.status(400).json({ erro: 'Tipo e valor são obrigatórios' });
+    if (!tipo || !valor || !ano || !mes) {
+        return res.status(400).json({ erro: 'Tipo, valor, ano e mes são obrigatórios' });
     }
 
     if (tipo === 'categoria' && !categoria) {
@@ -17,11 +26,11 @@ export async function criar(req, res) {
     }
 
     const [result] = await pool.query(
-        'INSERT INTO metas (tipo, categoria, valor, descricao) VALUES (?, ?, ?, ?)',
-        [tipo, categoria || null, valor, descricao || null]
+        'INSERT INTO metas (tipo, categoria, valor, descricao, ano, mes) VALUES (?, ?, ?, ?, ?, ?)',
+        [tipo, categoria || null, valor, descricao || null, ano, mes]
     );
 
-    res.status(201).json({ id: result.insertId, tipo, categoria, valor, descricao });
+    res.status(201).json({ id: result.insertId, tipo, categoria, valor, descricao, ano, mes });
 }
 
 export async function deletar(req, res) {

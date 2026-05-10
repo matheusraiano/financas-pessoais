@@ -107,7 +107,10 @@ export async function gerarNotificacoes(req, res) {
     }
 
     // metas
-    const [metas] = await pool.query('SELECT * FROM metas');
+    const [metas] = await pool.query(
+        'SELECT * FROM metas WHERE ano = ? AND mes = ?',
+        [ano, mes]
+    );
 
     for (const meta of metas) {
         if (meta.tipo === 'categoria') {

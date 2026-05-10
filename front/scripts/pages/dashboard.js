@@ -9,7 +9,7 @@ export async function inicializarDashboard(cleanupFunctions) {
     console.log('Dashboard carregado');
 
     removerListeners();
-    inicializarModal(); // inicializa o modal compartilhado
+    inicializarModal();
     inicializarCalendario();
     await atualizarTudo();
 
@@ -24,12 +24,27 @@ export async function inicializarDashboard(cleanupFunctions) {
         popularSelectCategorias(selectCategoria, selectTipo.value);
     });
 
+    const btnVerCategorias = document.getElementById('btn-ver-categorias');
+    const listaCategorias = document.getElementById('lista-categorias');
+    let categoriasVisiveis = false;
+
+    btnVerCategorias.addEventListener('click', async () => {
+        categoriasVisiveis = !categoriasVisiveis;
+        if (categoriasVisiveis) {
+            await carregarCategorias(selectCategoria, selectTipo);
+            listaCategorias.style.display = 'block';
+            btnVerCategorias.textContent = 'Ocultar categorias';
+        } else {
+            listaCategorias.style.display = 'none';
+            btnVerCategorias.textContent = 'Ver categorias';
+        }
+    });
+
     document.getElementById('form-transacao').addEventListener('submit', async (e) => {
         e.preventDefault();
         const { ano, mes } = getPeriodo();
         const dia = new Date().getDate();
         const dataTransacao = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-
         await fetch(`${API}/transacoes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -53,17 +68,8 @@ export async function inicializarDashboard(cleanupFunctions) {
         );
         e.target.reset();
         await popularSelectCategorias(selectCategoria, selectTipo.value);
+        if (categoriasVisiveis) await carregarCategorias(selectCategoria, selectTipo);
     });
-}
-
-async function carregarInvestimentos() {
-    try {
-        const res = await fetch(`${API}/investimentos/total`);
-        const { total } = await res.json();
-        document.getElementById('investimentos-total').textContent = formatar(total);
-    } catch (e) {
-        console.error('Erro ao carregar investimentos:', e);
-    }
 }
 
 async function atualizarTudo() {
@@ -117,6 +123,48 @@ async function carregarTransacoes(ano, mes) {
         });
     } catch (e) {
         console.error('Erro ao carregar transações:', e);
+    }
+}
+
+async function carregarInvestimentos() {
+    try {
+        const res = await fetch(`${API}/investimentos/total`);
+        const { total } = await res.json();
+        document.getElementById('investimentos-total').textContent = formatar(total);
+    } catch (e) {
+        console.error('Erro ao carregar investimentos:', e);
+    }
+}
+
+async function carregarCategorias(selectCategoria, selectTipo) {
+    try {
+        const res = await fetch(`${API}/categorias`);
+        const categorias = await res.json();
+        const container = document.getElementById('lista-categorias');
+        if (!container) return;
+        container.innerHTML = '';
+
+        categorias.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'categoria-item';
+            div.innerHTML = `
+                <div class="categoria-info">
+                    <span>${c.nome}</span>
+                    <span class="badge-tipo ${c.tipo}">
+                        ${c.tipo === 'ambos' ? 'Receita e Despesa' : c.tipo === 'receita' ? 'Receita' : 'Despesa'}
+                    </span>
+                </div>
+                <button class="btn-desativar-categoria" data-id="${c.id}">✕</button>
+            `;
+            div.querySelector('.btn-desativar-categoria').addEventListener('click', async () => {
+                await fetch(`${API}/categorias/${c.id}`, { method: 'DELETE' });
+                await carregarCategorias(selectCategoria, selectTipo);
+                await popularSelectCategorias(selectCategoria, selectTipo.value);
+            });
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.error('Erro ao carregar categorias:', e);
     }
 }
 

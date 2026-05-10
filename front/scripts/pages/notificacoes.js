@@ -28,12 +28,16 @@ export async function inicializarNotificacoes(cleanupFunctions) {
     // form de nova meta
     document.getElementById('form-meta').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const { ano, mes } = getPeriodo();
         const tipo = metaTipo.value;
+
         const body = {
             tipo,
             valor: document.getElementById('meta-valor').value,
             descricao: document.getElementById('meta-descricao').value,
-            categoria: tipo === 'categoria' ? document.getElementById('meta-categoria').value : null
+            categoria: tipo === 'categoria' ? document.getElementById('meta-categoria').value : null,
+            ano,
+            mes
         };
 
         await fetch(`${API}/metas`, {
@@ -120,13 +124,14 @@ function renderizarNotificacoes(notificacoes) {
 
 async function carregarMetas() {
     try {
-        const res = await fetch(`${API}/metas`);
+        const { ano, mes } = getPeriodo();
+        const res = await fetch(`${API}/metas?ano=${ano}&mes=${mes}`);
         const metas = await res.json();
         const container = document.getElementById('lista-metas');
         container.innerHTML = '';
 
         if (metas.length === 0) {
-            container.innerHTML = '<p class="notif-vazio">Nenhuma meta criada.</p>';
+            container.innerHTML = '<p class="notif-vazio">Nenhuma meta para este mês.</p>';
             return;
         }
 
@@ -136,7 +141,8 @@ async function carregarMetas() {
             const label = {
                 categoria: `Máx. em ${m.categoria}`,
                 economia: 'Meta de economia',
-                receita: 'Meta de receita'
+                receita: 'Meta de receita',
+                investimento: 'Meta de investimento'
             }[m.tipo];
 
             div.innerHTML = `

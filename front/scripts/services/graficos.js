@@ -8,13 +8,21 @@ const coresPizza = [
     '#e070e0', '#6600cc', '#9900ff', '#bb44bb'
 ];
 
+let graficoReceitasCategorias = null;
+
+const coresPizzaReceitas = [
+    '#00ff88', '#00cc6a', '#00aa55', '#008844',
+    '#006633', '#004422', '#00ff99', '#33ffaa'
+];
+
 export async function inicializarGraficos(ano, mes) {
     await renderizarFluxo(ano, mes);
     await renderizarCategorias(ano, mes);
+    await renderizarReceitasCategorias(ano, mes);
 }
 
 async function renderizarFluxo(ano, mes) {
-    const res = await fetch(`${API}/transacoes/fluxo`);
+    const res = await fetch(`${API}/transacoes/fluxo?ano=${ano}`);
     const dados = await res.json();
 
     const labels = dados.map(d => {
@@ -118,6 +126,51 @@ async function renderizarCategorias(ano, mes) {
             datasets: [{
                 data: valores,
                 backgroundColor: coresPizza.slice(0, dados.length),
+                borderColor: '#111',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#aaa', padding: 16 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ` ${Number(ctx.raw).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
+                    }
+                }
+            }
+        }
+    });
+}
+
+async function renderizarReceitasCategorias(ano, mes) {
+    const res = await fetch(`${API}/transacoes/receitas-categorias?ano=${ano}&mes=${mes}`);
+    const dados = await res.json();
+
+    const ctx = document.getElementById('graficoReceitasCategorias').getContext('2d');
+    if (graficoReceitasCategorias) graficoReceitasCategorias.destroy();
+
+    if (dados.length === 0) {
+        graficoReceitasCategorias = null;
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillStyle = '#555';
+        ctx.font = '14px DM Sans';
+        ctx.textAlign = 'center';
+        ctx.fillText('Sem receitas neste mês', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+
+    graficoReceitasCategorias = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: dados.map(d => d.categoria),
+            datasets: [{
+                data: dados.map(d => Number(d.total)),
+                backgroundColor: coresPizzaReceitas.slice(0, dados.length),
                 borderColor: '#111',
                 borderWidth: 2
             }]

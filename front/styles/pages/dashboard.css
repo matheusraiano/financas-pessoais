@@ -50,7 +50,7 @@ div.card-financeiro h2 {
 
 div.dashboard-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr;
     gap: 20px;
 }
 
@@ -353,4 +353,54 @@ span.data-edicao {
     border-color: var(--roxoClaro);
     color: white;
     font-weight: 600;
+}
+
+/**/
+/*LISTA DE CATEGORIAS*/
+/**/
+
+.categoria-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.categoria-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-desativar-categoria {
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+    padding: 4px 8px;
+}
+
+.btn-desativar-categoria:hover {
+    color: #ff4d6d;
+}
+
+.btn-ver-categorias {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+    margin-top: 12px;
+    width: 100%;
+}
+
+.btn-ver-categorias:hover {
+    border-color: var(--roxoClaro);
+    color: white;
 }
