@@ -1,0 +1,194 @@
+/**/
+/*INVESTIMENTOS*/
+/**/
+
+section.investimentos {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 25px;
+}
+
+/**/
+/*RESUMO GERAL*/
+/**/
+
+.inv-resumo-geral {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/**/
+/*GRID*/
+/**/
+
+.inv-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.inv-coluna-principal {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/**/
+/*HEADER DA LISTA*/
+/**/
+
+.inv-header-lista {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.inv-header-lista h3 {
+    margin: 0;
+}
+
+/**/
+/*CARDS DE ATIVO*/
+/**/
+
+.card-ativo {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: 0.3s;
+}
+
+.card-ativo:hover {
+    border-color: var(--roxoClaro);
+}
+
+.card-ativo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+}
+
+.card-ativo-header strong {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.card-ativo-header h3 {
+    margin: 0;
+    color: var(--roxoClaro);
+    font-size: 18px;
+}
+
+.card-ativo-detalhes {
+    display: flex;
+    gap: 16px;
+}
+
+.card-ativo-detalhes span {
+    color: #666;
+    font-size: 12px;
+}
+
+/**/
+/*BADGE TIPO*/
+/**/
+
+.badge-tipo {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-tipo.renda_fixa {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.badge-tipo.renda_variavel {
+    background: rgba(194, 63, 194, 0.1);
+    color: var(--roxoClaro);
+    border: 1px solid rgba(194, 63, 194, 0.2);
+}
+
+/**/
+/*BOTÃO DELETAR APORTE*/
+/**/
+
+.btn-deletar-aporte {
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+    padding: 4px 8px;
+}
+
+.btn-deletar-aporte:hover {
+    color: #ff4d6d;
+}
+
+/**/
+/*VAZIO*/
+/**/
+
+.inv-vazio {
+    color: #555;
+    text-align: center;
+    padding: 20px 0;
+    margin: 0;
+}
+
+/**/
+/*FORM*/
+/**/
+
+form#form-aporte {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 16px;
+}
+
+form#form-aporte button {
+    background: var(--roxo);
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+}
+
+form#form-aporte button:hover {
+    background: var(--roxoClaro);
+}
+
+.badge-operacao {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.badge-operacao.aporte {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+}
+
+.badge-operacao.retirada {
+    background: rgba(255, 77, 109, 0.1);
+    color: #ff4d6d;
+}

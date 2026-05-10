@@ -56,11 +56,22 @@ export async function inicializarDashboard(cleanupFunctions) {
     });
 }
 
+async function carregarInvestimentos() {
+    try {
+        const res = await fetch(`${API}/investimentos/total`);
+        const { total } = await res.json();
+        document.getElementById('investimentos-total').textContent = formatar(total);
+    } catch (e) {
+        console.error('Erro ao carregar investimentos:', e);
+    }
+}
+
 async function atualizarTudo() {
     const { ano, mes } = getPeriodo();
     await carregarResumo(ano, mes);
     await carregarTransacoes(ano, mes);
     await inicializarGraficos(ano, mes);
+    await carregarInvestimentos();
 }
 
 async function carregarResumo(ano, mes) {

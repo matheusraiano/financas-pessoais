@@ -1,0 +1,52 @@
+<section class="notificacoes">
+
+    <div class="dashboard-box">
+        <div id="seletor-periodo-notificacoes"></div>
+    </div>
+
+    <div class="notif-grid">
+
+        <div class="notif-coluna">
+            <div class="dashboard-box">
+                <div class="notif-header">
+                    <h3>Notificações</h3>
+                    <button id="btn-marcar-todas" class="btn-marcar-todas">Marcar todas como lidas</button>
+                </div>
+                <div id="lista-notificacoes">
+                    <p class="notif-vazio">Nenhuma notificação para este mês.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="notif-coluna">
+            <div class="dashboard-box">
+                <h3>Minhas Metas</h3>
+                <div id="lista-metas"></div>
+            </div>
+            <div class="dashboard-box">
+                <h3>Nova Meta</h3>
+                <form id="form-meta">
+                    <div class="grupo-form">
+                        <select id="meta-tipo">
+                            <option value="categoria">Gasto por categoria</option>
+                            <option value="economia">Meta de economia</option>
+                            <option value="receita">Meta de receita</option>
+                            <option value="investimento">Meta de investimento total</option>
+                        </select>
+                    </div>
+                    <div class="grupo-form" id="grupo-meta-categoria">
+                        <select id="meta-categoria"></select>
+                    </div>
+                    <div class="grupo-form">
+                        <input type="number" id="meta-valor" placeholder="Valor limite (R$)" required>
+                    </div>
+                    <div class="grupo-form">
+                        <input type="text" id="meta-descricao" placeholder="Descrição (opcional)">
+                    </div>
+                    <button type="submit">Criar Meta</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>

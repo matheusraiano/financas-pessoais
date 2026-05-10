@@ -3,6 +3,9 @@ dotenv.config();
 import express from 'express';
 import transacoesRouter from './routes/transacoes.js';
 import categoriasRouter from './routes/categorias.js';
+import metasRouter from './routes/metas.js';
+import notificacoesRouter from './routes/notificacoes.js';
+import investimentosRouter from './routes/investimentos.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +25,9 @@ app.use((req, res, next) => {
 // Rotas
 app.use('/api/transacoes', transacoesRouter);
 app.use('/api/categorias', categoriasRouter);
+app.use('/api/metas', metasRouter);
+app.use('/api/notificacoes', notificacoesRouter);
+app.use('/api/investimentos', investimentosRouter);
 
 app.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);

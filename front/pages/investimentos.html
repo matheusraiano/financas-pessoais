@@ -1,0 +1,72 @@
+<section class="investimentos">
+
+    <div class="inv-resumo-geral">
+        <div class="card-financeiro">
+            <span>Total Investido</span>
+            <h2 id="inv-total">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro">
+            <span>Renda Fixa</span>
+            <h2 id="inv-renda-fixa">R$ 0,00</h2>
+        </div>
+        <div class="card-financeiro">
+            <span>Renda Variável</span>
+            <h2 id="inv-renda-variavel">R$ 0,00</h2>
+        </div>
+    </div>
+
+    <div class="inv-grid">
+
+        <div class="inv-coluna-principal">
+
+            <div class="dashboard-box">
+                <div class="inv-header-lista">
+                    <h3>Ativos</h3>
+                    <div class="filtro-botoes">
+                        <button class="filtro-btn ativo" data-tipo="todos">Todos</button>
+                        <button class="filtro-btn" data-tipo="renda_fixa">Renda Fixa</button>
+                        <button class="filtro-btn" data-tipo="renda_variavel">Renda Variável</button>
+                    </div>
+                </div>
+                <div id="cards-ativos"></div>
+            </div>
+
+            <div class="dashboard-box">
+                <h3>Histórico de Aportes</h3>
+                <div id="lista-aportes"></div>
+            </div>
+
+        </div>
+
+        <div class="inv-coluna-lateral">
+            <div class="dashboard-box">
+                <h3>Novo Aporte</h3>
+                <form id="form-aporte">
+                    <div class="grupo-form">
+                        <select id="inv-operacao">
+                            <option value="aporte">Aporte</option>
+                            <option value="retirada">Retirada</option>
+                        </select>
+                        <select id="inv-tipo">
+                            <option value="renda_fixa">Renda Fixa</option>
+                            <option value="renda_variavel">Renda Variável</option>
+                        </select>
+                    </div>
+                    <div class="grupo-form">
+                        <input type="text" id="inv-nome" placeholder="Nome do ativo (ex: PETR4)" required>
+                    </div>
+                    <div class="grupo-form">
+                        <input type="number" id="inv-valor" placeholder="Valor (R$)" required>
+                        <input type="number" id="inv-cotas" placeholder="Qtd. de cotas" step="0.0001">
+                    </div>
+                    <div class="grupo-form">
+                        <input type="date" id="inv-data" required>
+                    </div>
+                    <button type="submit">Registrar</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</section>
