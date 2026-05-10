@@ -21,10 +21,18 @@ CREATE TABLE IF NOT EXISTS categorias (
 INSERT INTO categorias (nome, tipo) VALUES
 ('Salário', 'receita'),
 ('Freelance', 'receita'),
+('Dividendos', 'receita'),
+('Renda Extra', 'receita'),
 ('Alimentação', 'despesa'),
 ('Transporte', 'despesa'),
 ('Lazer', 'despesa'),
 ('Saúde', 'despesa'),
+('Cartão de Crédito', 'despesa'),
+('Conta de Luz', 'despesa'),
+('Conta de Água', 'despesa'),
+('Conta de Internet', 'despesa'),
+('Faculdade', 'despesa'),
+('Investimentos', 'despesa'),
 ('Outros', 'ambos');
 
 CREATE TABLE IF NOT EXISTS metas (
