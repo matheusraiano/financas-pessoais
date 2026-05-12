@@ -1,6 +1,6 @@
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { popularSelectCategorias } from '../services/categorias.js';
-import { formatarData } from '../services/utils.js';
+import { formatarData, formatarValor } from '../services/utils.js';
 
 import { API } from '../services/config.js';
 
@@ -152,7 +152,7 @@ async function carregarMetas() {
                     <span>${m.descricao || ''}</span>
                 </div>
                 <div class="meta-direita">
-                    <span class="meta-valor">${formatar(m.valor)}</span>
+                    <span class="meta-valor">${formatarValor(m.valor)}</span>
                     <button class="btn-deletar-meta" data-id="${m.id}">✕</button>
                 </div>
             `;
@@ -190,8 +190,4 @@ function atualizarBadgeMenu(notificacoes) {
     } else {
         badge.style.display = 'none';
     }
-}
-
-function formatar(valor) {
-    return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }

@@ -1,4 +1,5 @@
-import { formatarData } from '../services/utils.js';
+import { formatarData, formatarValor } from '../services/utils.js';
+import { getPeriodo } from '../services/periodo.js';
 
 import { API } from '../services/config.js';
 let filtroTipo = 'todos';
@@ -47,15 +48,16 @@ async function atualizarTudo() {
     await carregarTotal();
     await carregarAtivos();
     await carregarAportes();
+    await verificarBadgeNotificacoes();
 }
 
 async function carregarTotal() {
     try {
         const res = await fetch(`${API}/investimentos/total`);
         const { total, renda_fixa, renda_variavel } = await res.json();
-        document.getElementById('inv-total').textContent = formatar(total);
-        document.getElementById('inv-renda-fixa').textContent = formatar(renda_fixa);
-        document.getElementById('inv-renda-variavel').textContent = formatar(renda_variavel);
+        document.getElementById('inv-total').textContent = formatarValor(total);
+        document.getElementById('inv-renda-fixa').textContent = formatarValor(renda_fixa);
+        document.getElementById('inv-renda-variavel').textContent = formatarValor(renda_variavel);
     } catch (e) {
         console.error('Erro ao carregar total:', e);
     }
@@ -89,7 +91,7 @@ async function carregarAtivos() {
                             ${a.tipo === 'renda_fixa' ? 'Renda Fixa' : 'Renda Variável'}
                         </span>
                     </div>
-                    <h3>${formatar(a.total_investido)}</h3>
+                    <h3>${formatarValor(a.total_investido)}</h3>
                 </div>
                 <div class="card-ativo-detalhes">
                     <span>${a.num_aportes} aporte${a.num_aportes > 1 ? 's' : ''}</span>
@@ -134,7 +136,7 @@ async function carregarAportes() {
                 </div>
                 <div style="display:flex; align-items:center; gap:12px;">
                     <div class="transacao-valor ${a.operacao === 'aporte' ? 'receita' : 'despesa'}">
-                        ${a.operacao === 'aporte' ? '+' : '-'} ${formatar(a.valor)}
+                        ${a.operacao === 'aporte' ? '+' : '-'} ${formatarValor(a.valor)}
                     </div>
                     <button class="btn-deletar-aporte" data-id="${a.id}">✕</button>
                 </div>
@@ -153,6 +155,31 @@ async function carregarAportes() {
     }
 }
 
-function formatar(valor) {
-    return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+async function verificarBadgeNotificacoes() {
+    try {
+        const { ano, mes } = getPeriodo();
+        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
+        const notificacoes = await res.json();
+
+        const naoLidas = notificacoes.filter(n => !n.lida).length;
+        let badge = document.getElementById('badge-notificacoes');
+
+        if (!badge) {
+            const navItem = document.querySelector('[data-page="notificacoes.html"]');
+            if (!navItem) return;
+            badge = document.createElement('span');
+            badge.id = 'badge-notificacoes';
+            badge.className = 'badge-notif';
+            navItem.appendChild(badge);
+        }
+
+        if (naoLidas > 0) {
+            badge.textContent = naoLidas;
+            badge.style.display = 'inline-flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch {
+        console.error('Erro ao verificar notificações');
+    }
 }

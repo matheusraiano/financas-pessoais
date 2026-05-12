@@ -1,6 +1,6 @@
 import { inicializarModal, abrirModal } from '../services/modal.js';
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
-import { formatarData } from '../services/utils.js';
+import { formatarData, formatarValor } from '../services/utils.js';
 
 import { API } from '../services/config.js';
 
@@ -43,15 +43,16 @@ async function atualizarExtrato() {
     const { ano, mes } = getPeriodo();
     await carregarResumo(ano, mes);
     await carregarTransacoes(ano, mes);
+    await verificarBadgeNotificacoes();
 }
 
 async function carregarResumo(ano, mes) {
     try {
         const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`);
         const { saldo, receitas, despesas } = await res.json();
-        document.getElementById('ext-receitas').textContent = formatar(receitas);
-        document.getElementById('ext-despesas').textContent = formatar(despesas);
-        document.getElementById('ext-saldo').textContent = formatar(saldo);
+        document.getElementById('ext-receitas').textContent = formatarValor(receitas);
+        document.getElementById('ext-despesas').textContent = formatarValor(despesas);
+        document.getElementById('ext-saldo').textContent = formatarValor(saldo);
         document.getElementById('ext-saldo').style.color = saldo >= 0 ? '#00ff88' : '#ff4d6d';
     } catch (e) {
         console.error('Erro ao carregar resumo:', e);
@@ -90,7 +91,7 @@ async function carregarTransacoes(ano, mes) {
                     <span>${formatarData(t.data)}${dataEdicao}</span>
                 </div>
                 <div class="transacao-valor ${t.tipo}">
-                    ${t.tipo === 'receita' ? '+' : '-'} ${formatar(t.valor)}
+                    ${t.tipo === 'receita' ? '+' : '-'} ${formatarValor(t.valor)}
                 </div>
             `;
             div.addEventListener('click', () => abrirModal(t, {
@@ -120,6 +121,31 @@ async function popularFiltroCategoria() {
     }
 }
 
-function formatar(valor) {
-    return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+async function verificarBadgeNotificacoes() {
+    try {
+        const { ano, mes } = getPeriodo();
+        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
+        const notificacoes = await res.json();
+
+        const naoLidas = notificacoes.filter(n => !n.lida).length;
+        let badge = document.getElementById('badge-notificacoes');
+
+        if (!badge) {
+            const navItem = document.querySelector('[data-page="notificacoes.html"]');
+            if (!navItem) return;
+            badge = document.createElement('span');
+            badge.id = 'badge-notificacoes';
+            badge.className = 'badge-notif';
+            navItem.appendChild(badge);
+        }
+
+        if (naoLidas > 0) {
+            badge.textContent = naoLidas;
+            badge.style.display = 'inline-flex';
+        } else {
+            badge.style.display = 'none';
+        }
+    } catch {
+        console.error('Erro ao verificar notificações');
+    }
 }

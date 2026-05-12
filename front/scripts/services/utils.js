@@ -4,3 +4,7 @@ export function formatarData(dataStr) {
     const [ano, mes, dia] = String(dataStr).split('T')[0].split('-');
     return `${dia}/${mes}/${ano}`;
 }
+
+export function formatarValor(valor) {
+    return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
