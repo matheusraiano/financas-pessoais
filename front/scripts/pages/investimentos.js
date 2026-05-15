@@ -95,7 +95,7 @@ async function carregarAtivos() {
                 </div>
                 <div class="card-ativo-detalhes">
                     <span>${a.num_aportes} aporte${a.num_aportes > 1 ? 's' : ''}</span>
-                    ${a.total_cotas ? `<span>${Number(a.total_cotas).toFixed(4)} cotas</span>` : ''}
+                    ${a.total_cotas ? `<span>${Number(a.total_cotas)} cotas</span>` : ''}
                     <span>Desde ${formatarData(a.primeiro_aporte)}</span>
                 </div>
             `;
@@ -130,7 +130,7 @@ async function carregarAportes() {
                 <div class="transacao-info">
                     <strong>${a.nome}</strong>
                     <span>${formatarData(a.data)}
-                        ${a.cotas ? ` · ${Number(a.cotas).toFixed(4)} cotas` : ''}
+                        ${a.cotas ? ` · ${Number(a.cotas)} cotas` : ''}
                         · <span class="badge-operacao ${a.operacao}">${a.operacao === 'aporte' ? 'Aporte' : 'Retirada'}</span>
                     </span>
                 </div>
