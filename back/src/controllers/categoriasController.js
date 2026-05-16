@@ -63,3 +63,31 @@ export async function toggleAtivo(req, res) {
 
     res.json({ ativa: novoEstado });
 }
+
+export async function deletar(req, res) {
+    const id = req.params.id;
+
+    // verifica se foi usada em alguma transação
+    const [uso] = await pool.query(
+        `SELECT COUNT(*) AS total FROM transacoes 
+         WHERE categoria = (SELECT nome FROM categorias WHERE id = ?)`,
+        [id]
+    );
+
+    if (uso[0].total > 0) {
+        return res.status(409).json({
+            erro: 'Categoria não pode ser deletada pois já foi usada em transações. Inative-a.'
+        });
+    }
+
+    const [result] = await pool.query(
+        'DELETE FROM categorias WHERE id = ?',
+        [id]
+    );
+
+    if (result.affectedRows === 0) {
+        return res.status(404).json({ erro: 'Categoria não encontrada' });
+    }
+
+    res.status(204).send();
+}

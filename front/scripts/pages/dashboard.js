@@ -156,16 +156,39 @@ async function carregarCategorias(selectCategoria, selectTipo) {
                         ${c.tipo === 'ambos' ? 'Receita e Despesa' : c.tipo === 'receita' ? 'Receita' : 'Despesa'}
                     </span>
                 </div>
-                <button class="btn-toggle-categoria" data-id="${c.id}" data-ativa="${c.ativa}">
-                    ${c.ativa ? '✕' : '↺'}
-                </button>
+                <div style="display:flex; gap:6px;">
+                    <button class="btn-toggle-categoria" data-id="${c.id}" data-ativa="${c.ativa}" title="${c.ativa ? 'Inativar' : 'Reativar'}">
+                        ${c.ativa ? '✕' : '↺'}
+                    </button>
+                    <button class="btn-deletar-categoria" data-id="${c.id}" title="Deletar permanentemente">
+                        🗑
+                    </button>
+                </div>
             `;
+
             div.querySelector('.btn-toggle-categoria').addEventListener('click', async (e) => {
                 const btn = e.currentTarget;
                 await fetch(`${API}/categorias/${btn.dataset.id}/toggle`, { method: 'PATCH' });
                 await carregarCategorias(selectCategoria, selectTipo);
                 await popularSelectCategorias(selectCategoria, selectTipo.value);
             });
+
+            div.querySelector('.btn-deletar-categoria').addEventListener('click', async (e) => {
+                const id = e.currentTarget.dataset.id;
+                const res = await fetch(`${API}/categorias/${id}`, { method: 'DELETE' });
+
+                if (res.status === 409) {
+                    const erro = await res.json();
+                    alert(erro.erro);
+                    return;
+                }
+
+                if (res.ok) {
+                    await carregarCategorias(selectCategoria, selectTipo);
+                    await popularSelectCategorias(selectCategoria, selectTipo.value);
+                }
+            });
+
             container.appendChild(div);
         });
     } catch (e) {

@@ -443,3 +443,17 @@ span.data-edicao {
 .btn-toggle-categoria[data-ativa="false"]:hover {
     color: #00ff88;
 }
+
+.btn-deletar-categoria {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    transition: 0.2s;
+    opacity: 0.4;
+}
+
+.btn-deletar-categoria:hover {
+    opacity: 1;
+}
