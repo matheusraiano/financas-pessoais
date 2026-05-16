@@ -140,7 +140,7 @@ async function carregarInvestimentos() {
 
 async function carregarCategorias(selectCategoria, selectTipo) {
     try {
-        const res = await fetch(`${API}/categorias`);
+        const res = await fetch(`${API}/categorias?todas=true`);
         const categorias = await res.json();
         const container = document.getElementById('lista-categorias');
         if (!container) return;
@@ -148,18 +148,21 @@ async function carregarCategorias(selectCategoria, selectTipo) {
 
         categorias.forEach(c => {
             const div = document.createElement('div');
-            div.className = 'categoria-item';
+            div.className = `categoria-item ${!c.ativa ? 'categoria-inativa' : ''}`;
             div.innerHTML = `
                 <div class="categoria-info">
-                    <span>${c.nome}</span>
+                    <span>${c.nome} ${!c.ativa ? '<span class="badge-inativa">Inativa</span>' : ''}</span>
                     <span class="badge-tipo ${c.tipo}">
                         ${c.tipo === 'ambos' ? 'Receita e Despesa' : c.tipo === 'receita' ? 'Receita' : 'Despesa'}
                     </span>
                 </div>
-                <button class="btn-desativar-categoria" data-id="${c.id}">✕</button>
+                <button class="btn-toggle-categoria" data-id="${c.id}" data-ativa="${c.ativa}">
+                    ${c.ativa ? '✕' : '↺'}
+                </button>
             `;
-            div.querySelector('.btn-desativar-categoria').addEventListener('click', async () => {
-                await fetch(`${API}/categorias/${c.id}`, { method: 'DELETE' });
+            div.querySelector('.btn-toggle-categoria').addEventListener('click', async (e) => {
+                const btn = e.currentTarget;
+                await fetch(`${API}/categorias/${btn.dataset.id}/toggle`, { method: 'PATCH' });
                 await carregarCategorias(selectCategoria, selectTipo);
                 await popularSelectCategorias(selectCategoria, selectTipo.value);
             });

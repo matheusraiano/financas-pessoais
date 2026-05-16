@@ -404,3 +404,42 @@ span.data-edicao {
     border-color: var(--roxoClaro);
     color: white;
 }
+
+.categoria-inativa {
+    opacity: 0.5;
+}
+
+.badge-inativa {
+    font-size: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #666;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 6px;
+}
+
+.btn-toggle-categoria {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    transition: 0.2s;
+}
+
+.btn-toggle-categoria[data-ativa="true"] {
+    color: #555;
+}
+
+.btn-toggle-categoria[data-ativa="true"]:hover {
+    color: #ff4d6d;
+}
+
+.btn-toggle-categoria[data-ativa="false"] {
+    color: #555;
+}
+
+.btn-toggle-categoria[data-ativa="false"]:hover {
+    color: #00ff88;
+}
