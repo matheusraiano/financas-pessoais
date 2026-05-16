@@ -106,7 +106,7 @@ async function carregarTransacoes(ano, mes) {
             div.className = 'transacao';
             div.dataset.id = t.id;
             const dataEdicao = t.data_edicao
-                ? ` <span class="data-edicao">(editado em ${t.data_edicao})</span>`
+                ? ` <span class="data-edicao">(editado em ${formatarData(t.data_edicao)})</span>`
                 : '';
             div.innerHTML = `
                 <div class="transacao-info">

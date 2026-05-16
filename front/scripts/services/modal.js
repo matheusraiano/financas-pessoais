@@ -81,7 +81,7 @@ export async function abrirModal(transacao, callbacks = {}) {
     onDeletar = callbacks.onDeletar || null;
     transacaoAtualId = transacao.id;
 
-    const dataEdicao = transacao.data_edicao ? ` (editado em ${transacao.data_edicao})` : '';
+    const dataEdicao = transacao.data_edicao ? ` (editado em ${formatarData(transacao.data_edicao)})` : '';
     document.getElementById('modal-titulo').textContent = `Transação — ${formatarData(transacao.data)}${dataEdicao}`;
     document.getElementById('edit-valor').value = transacao.valor;
     document.getElementById('edit-tipo').value = transacao.tipo;
