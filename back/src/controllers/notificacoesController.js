@@ -22,6 +22,15 @@ export async function marcarLida(req, res) {
     res.status(204).send();
 }
 
+export async function toggleLida(req, res) {
+    const { lida } = req.body;
+    await pool.query(
+        'UPDATE notificacoes SET lida = ? WHERE id = ?',
+        [lida, req.params.id]
+    );
+    res.status(204).send();
+}
+
 export async function marcarTodasLidas(req, res) {
     const { ano, mes } = req.body;
     await pool.query(
@@ -40,7 +49,6 @@ export async function gerarNotificacoes(req, res) {
 
     const novas = [];
 
-    // resumo do mês
     const [resumo] = await pool.query(`
         SELECT
             SUM(CASE WHEN tipo = 'receita' THEN valor ELSE 0 END) AS receitas,
@@ -53,7 +61,6 @@ export async function gerarNotificacoes(req, res) {
     const despesas = Number(resumo[0].despesas) || 0;
     const saldo = receitas - despesas;
 
-    // alerta: saldo negativo
     if (saldo < 0) {
         novas.push({
             tipo: 'alerta',
@@ -61,7 +68,6 @@ export async function gerarNotificacoes(req, res) {
         });
     }
 
-    // alerta: despesas maiores que receitas
     if (despesas > receitas && saldo >= 0) {
         novas.push({
             tipo: 'alerta',
@@ -69,7 +75,6 @@ export async function gerarNotificacoes(req, res) {
         });
     }
 
-    // total investido geral
     const [totalInv] = await pool.query(`
         SELECT
             SUM(CASE WHEN operacao = 'aporte' THEN valor ELSE -valor END) AS total,
@@ -86,7 +91,6 @@ export async function gerarNotificacoes(req, res) {
     const rendaFixa = Number(totalInv[0].renda_fixa) || 0;
     const rendaVariavel = Number(totalInv[0].renda_variavel) || 0;
 
-    // alerta: diversificação
     if (totalInvestido > 0) {
         const percFixa = (rendaFixa / totalInvestido) * 100;
         const percVariavel = (rendaVariavel / totalInvestido) * 100;
@@ -106,7 +110,6 @@ export async function gerarNotificacoes(req, res) {
         }
     }
 
-    // metas
     const [metas] = await pool.query(
         'SELECT * FROM metas WHERE ano = ? AND mes = ?',
         [ano, mes]
@@ -157,12 +160,20 @@ export async function gerarNotificacoes(req, res) {
         }
     }
 
+    // salva quais mensagens já foram lidas antes de recriar
+    const [jaLidas] = await pool.query(
+        'SELECT mensagem FROM notificacoes WHERE ano = ? AND mes = ? AND lida = TRUE',
+        [ano, mes]
+    );
+    const mensagensLidas = new Set(jaLidas.map(n => n.mensagem));
+
     await pool.query('DELETE FROM notificacoes WHERE ano = ? AND mes = ?', [ano, mes]);
 
     for (const n of novas) {
+        const lida = mensagensLidas.has(n.mensagem);
         await pool.query(
-            'INSERT INTO notificacoes (tipo, mensagem, ano, mes) VALUES (?, ?, ?, ?)',
-            [n.tipo, n.mensagem, ano, mes]
+            'INSERT INTO notificacoes (tipo, mensagem, lida, ano, mes) VALUES (?, ?, ?, ?, ?)',
+            [n.tipo, n.mensagem, lida, ano, mes]
         );
     }
 

@@ -212,3 +212,20 @@ form#form-meta button:hover {
     margin-left: 8px;
     vertical-align: middle;
 }
+.btn-toggle-lida {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-toggle-lida:hover {
+    border-color: var(--roxoClaro);
+    color: white;
+}

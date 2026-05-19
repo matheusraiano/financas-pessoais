@@ -1,7 +1,6 @@
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { popularSelectCategorias } from '../services/categorias.js';
 import { formatarData, formatarValor } from '../services/utils.js';
-
 import { API } from '../services/config.js';
 
 export async function inicializarNotificacoes(cleanupFunctions) {
@@ -15,7 +14,6 @@ export async function inicializarNotificacoes(cleanupFunctions) {
     onPeriodoMudou(async () => await atualizarTudo());
     cleanupFunctions.push(() => removerListeners());
 
-    // mostra/oculta select de categoria conforme tipo de meta
     const metaTipo = document.getElementById('meta-tipo');
     const grupoCategoria = document.getElementById('grupo-meta-categoria');
 
@@ -24,9 +22,8 @@ export async function inicializarNotificacoes(cleanupFunctions) {
     metaTipo.addEventListener('change', () => {
         grupoCategoria.style.display = metaTipo.value === 'categoria' ? 'flex' : 'none';
     });
-    grupoCategoria.style.display = 'flex'; // começa visível
+    grupoCategoria.style.display = 'flex';
 
-    // form de nova meta
     document.getElementById('form-meta').addEventListener('submit', async (e) => {
         e.preventDefault();
         const { ano, mes } = getPeriodo();
@@ -52,7 +49,6 @@ export async function inicializarNotificacoes(cleanupFunctions) {
         await atualizarTudo();
     });
 
-    // marcar todas como lidas
     document.getElementById('btn-marcar-todas').addEventListener('click', async () => {
         const { ano, mes } = getPeriodo();
         await fetch(`${API}/notificacoes/todas/lidas`, {
@@ -72,7 +68,6 @@ async function atualizarTudo() {
 
 async function gerarECarregarNotificacoes(ano, mes) {
     try {
-        // gera as notificações do mês e já retorna
         const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
         const notificacoes = await res.json();
         renderizarNotificacoes(notificacoes);
@@ -83,11 +78,15 @@ async function gerarECarregarNotificacoes(ano, mes) {
 }
 
 async function carregarNotificacoes() {
-    const { ano, mes } = getPeriodo();
-    const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`);
-    const notificacoes = await res.json();
-    renderizarNotificacoes(notificacoes);
-    atualizarBadgeMenu(notificacoes);
+    try {
+        const { ano, mes } = getPeriodo();
+        const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`);
+        const notificacoes = await res.json();
+        renderizarNotificacoes(notificacoes);
+        atualizarBadgeMenu(notificacoes);
+    } catch (e) {
+        console.error('Erro ao carregar notificações:', e);
+    }
 }
 
 function renderizarNotificacoes(notificacoes) {
@@ -108,16 +107,23 @@ function renderizarNotificacoes(notificacoes) {
                 <p>${n.mensagem}</p>
                 <span>${formatarData(n.criada_em)}</span>
             </div>
-            ${!n.lida ? `<button class="btn-lida" data-id="${n.id}">✓</button>` : ''}
+            <button class="btn-toggle-lida" data-id="${n.id}" data-lida="${n.lida}" title="${n.lida ? 'Marcar como não lida' : 'Marcar como lida'}">
+                ${n.lida ? '↺' : '✓'}
+            </button>
         `;
 
-        if (!n.lida) {
-            div.querySelector('.btn-lida').addEventListener('click', async (e) => {
-                e.stopPropagation();
-                await fetch(`${API}/notificacoes/${n.id}/lida`, { method: 'PATCH' });
-                await carregarNotificacoes();
+        div.querySelector('.btn-toggle-lida').addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            const estaLida = btn.dataset.lida === 'true' || btn.dataset.lida === '1';
+
+            await fetch(`${API}/notificacoes/${n.id}/toggle-lida`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lida: !estaLida })
             });
-        }
+            await carregarNotificacoes();
+        });
 
         container.appendChild(div);
     });
@@ -169,12 +175,10 @@ async function carregarMetas() {
     }
 }
 
-// badge no ícone de notificações no menu
 function atualizarBadgeMenu(notificacoes) {
     const naoLidas = notificacoes.filter(n => !n.lida).length;
     let badge = document.getElementById('badge-notificacoes');
 
-    // cria o badge se não existir
     if (!badge) {
         const navItem = document.querySelector('[data-page="notificacoes.html"]');
         if (!navItem) return;
