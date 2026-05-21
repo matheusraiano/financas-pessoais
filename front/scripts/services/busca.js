@@ -1,4 +1,4 @@
-import { formatarData } from '../services/utils.js';
+import { formatarData } from './utils.js';
 
 import { API } from './config.js';
 
