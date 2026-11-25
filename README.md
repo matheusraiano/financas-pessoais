@@ -171,7 +171,7 @@ Abra o arquivo `front/index.html` com um servidor local (ex: Live Server no VS C
 |--------|------|-----------|
 | GET | `/api/transacoes?ano=&mes=` | Lista transações do mês |
 | POST | `/api/transacoes` | Cria transação |
-| PUT | `/api/transacoes/:id` | Edita transação |
+| PUT | `/api/transacoes/:id` | Edita transação (valor, tipo, categoria, data, descricao) |
 | DELETE | `/api/transacoes/:id` | Remove transação |
 | GET | `/api/transacoes/resumo?ano=&mes=` | Resumo financeiro do mês |
 | GET | `/api/transacoes/fluxo?ano=` | Fluxo mensal do ano |
@@ -187,9 +187,12 @@ Abra o arquivo `front/index.html` com um servidor local (ex: Live Server no VS C
 | GET | `/api/investimentos/total` | Total geral investido |
 | GET | `/api/metas?ano=&mes=` | Lista metas do mês |
 | POST | `/api/metas` | Cria meta |
+| PUT | `/api/metas/:id` | Edita valor e descrição de uma meta |
 | DELETE | `/api/metas/:id` | Remove meta |
+| GET | `/api/notificacoes?ano=&mes=` | Lista notificações do mês |
 | GET | `/api/notificacoes/gerar?ano=&mes=` | Gera e retorna notificações |
 | PATCH | `/api/notificacoes/:id/lida` | Marca notificação como lida |
+| PATCH | `/api/notificacoes/:id/toggle-lida` | Alterna estado lida/não lida |
 | PATCH | `/api/notificacoes/todas/lidas` | Marca todas como lidas |
 | GET | `/api/busca?q=` | Busca global |
 

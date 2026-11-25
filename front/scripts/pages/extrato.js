@@ -1,7 +1,7 @@
 import { inicializarModal, abrirModal } from '../services/modal.js';
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { formatarData, formatarValor } from '../services/utils.js';
-
+import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
 
 let filtroTipo = 'todos';
@@ -89,6 +89,7 @@ async function carregarTransacoes(ano, mes) {
                 <div class="transacao-info">
                     <strong>${t.categoria}</strong>
                     <span>${formatarData(t.data)}${dataEdicao}</span>
+                    ${t.descricao ? `<span class="transacao-descricao">${t.descricao}</span>` : ''}
                 </div>
                 <div class="transacao-valor ${t.tipo}">
                     ${t.tipo === 'receita' ? '+' : '-'} ${formatarValor(t.valor)}
@@ -121,31 +122,3 @@ async function popularFiltroCategoria() {
     }
 }
 
-async function verificarBadgeNotificacoes() {
-    try {
-        const { ano, mes } = getPeriodo();
-        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
-        const notificacoes = await res.json();
-
-        const naoLidas = notificacoes.filter(n => !n.lida).length;
-        let badge = document.getElementById('badge-notificacoes');
-
-        if (!badge) {
-            const navItem = document.querySelector('[data-page="notificacoes.html"]');
-            if (!navItem) return;
-            badge = document.createElement('span');
-            badge.id = 'badge-notificacoes';
-            badge.className = 'badge-notif';
-            navItem.appendChild(badge);
-        }
-
-        if (naoLidas > 0) {
-            badge.textContent = naoLidas;
-            badge.style.display = 'inline-flex';
-        } else {
-            badge.style.display = 'none';
-        }
-    } catch {
-        console.error('Erro ao verificar notificações');
-    }
-}

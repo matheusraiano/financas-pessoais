@@ -3,13 +3,16 @@ USE financas;
 
 CREATE TABLE IF NOT EXISTS transacoes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    descricao VARCHAR(255),
+    descricao VARCHAR(255) NULL,
     valor DECIMAL(15,2) NOT NULL,
     tipo ENUM('receita', 'despesa') NOT NULL,
     categoria VARCHAR(100),
     data DATE NOT NULL,
     data_edicao DATE NULL
 );
+
+-- migration: adiciona descricao caso a tabela já exista sem ela
+ALTER TABLE transacoes ADD COLUMN IF NOT EXISTS descricao VARCHAR(255) NULL AFTER id;
 
 CREATE TABLE IF NOT EXISTS categorias (
     id INT AUTO_INCREMENT PRIMARY KEY,

@@ -142,6 +142,13 @@ div.transacao-info span {
     font-size: 13px;
 }
 
+.transacao-descricao {
+    color: #555;
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 2px;
+}
+
 div.transacao-valor.receita {
     color: #00ff88;
     font-weight: bold;

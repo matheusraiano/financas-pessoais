@@ -1,6 +1,7 @@
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { popularSelectCategorias } from '../services/categorias.js';
 import { formatarData, formatarValor } from '../services/utils.js';
+import { atualizarBadgeMenu } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
 
 export async function inicializarNotificacoes(cleanupFunctions) {
@@ -159,9 +160,23 @@ async function carregarMetas() {
                 </div>
                 <div class="meta-direita">
                     <span class="meta-valor">${formatarValor(m.valor)}</span>
+                    <button class="btn-editar-meta" data-id="${m.id}" data-valor="${m.valor}" data-descricao="${m.descricao || ''}" title="Editar meta">✏️</button>
                     <button class="btn-deletar-meta" data-id="${m.id}">✕</button>
                 </div>
             `;
+
+            div.querySelector('.btn-editar-meta').addEventListener('click', async (e) => {
+                const btn = e.currentTarget;
+                const novoValor = prompt('Novo valor para a meta (R$):', btn.dataset.valor);
+                if (novoValor === null) return;
+                const novaDescricao = prompt('Nova descrição (opcional):', btn.dataset.descricao);
+                await fetch(`${API}/metas/${btn.dataset.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ valor: novoValor, descricao: novaDescricao || null })
+                });
+                await atualizarTudo();
+            });
 
             div.querySelector('.btn-deletar-meta').addEventListener('click', async () => {
                 await fetch(`${API}/metas/${m.id}`, { method: 'DELETE' });
@@ -175,23 +190,3 @@ async function carregarMetas() {
     }
 }
 
-function atualizarBadgeMenu(notificacoes) {
-    const naoLidas = notificacoes.filter(n => !n.lida).length;
-    let badge = document.getElementById('badge-notificacoes');
-
-    if (!badge) {
-        const navItem = document.querySelector('[data-page="notificacoes.html"]');
-        if (!navItem) return;
-        badge = document.createElement('span');
-        badge.id = 'badge-notificacoes';
-        badge.className = 'badge-notif';
-        navItem.appendChild(badge);
-    }
-
-    if (naoLidas > 0) {
-        badge.textContent = naoLidas;
-        badge.style.display = 'inline-flex';
-    } else {
-        badge.style.display = 'none';
-    }
-}

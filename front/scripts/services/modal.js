@@ -26,6 +26,12 @@ export function inicializarModal() {
                         </select>
                         <select id="edit-categoria"></select>
                     </div>
+                    <div class="grupo-form">
+                        <input type="date" id="edit-data">
+                    </div>
+                    <div class="grupo-form">
+                        <input type="text" id="edit-descricao" placeholder="Descrição (opcional)">
+                    </div>
                     <div class="modal-botoes">
                         <button type="submit" class="btn-salvar">Salvar</button>
                         <button type="button" id="btn-deletar" class="btn-deletar">Deletar</button>
@@ -52,7 +58,9 @@ export function inicializarModal() {
         const dados = {
             valor: document.getElementById('edit-valor').value,
             tipo: document.getElementById('edit-tipo').value,
-            categoria: document.getElementById('edit-categoria').value
+            categoria: document.getElementById('edit-categoria').value,
+            data: document.getElementById('edit-data').value || null,
+            descricao: document.getElementById('edit-descricao').value || null
         };
         await fetch(`${API}/transacoes/${transacaoAtualId}`, {
             method: 'PUT',
@@ -85,6 +93,9 @@ export async function abrirModal(transacao, callbacks = {}) {
     document.getElementById('modal-titulo').textContent = `Transação — ${formatarData(transacao.data)}${dataEdicao}`;
     document.getElementById('edit-valor').value = transacao.valor;
     document.getElementById('edit-tipo').value = transacao.tipo;
+    // data no formato YYYY-MM-DD para o input type="date"
+    document.getElementById('edit-data').value = String(transacao.data).split('T')[0];
+    document.getElementById('edit-descricao').value = transacao.descricao || '';
 
     const editCategoria = document.getElementById('edit-categoria');
     await popularSelectCategorias(editCategoria, transacao.tipo);

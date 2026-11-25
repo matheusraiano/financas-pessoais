@@ -168,6 +168,20 @@ section.notificacoes {
     color: #ff4d6d;
 }
 
+.btn-editar-meta {
+    background: transparent;
+    border: none;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s;
+    padding: 4px 8px;
+}
+
+.btn-editar-meta:hover {
+    color: var(--roxoClaro);
+}
+
 /**/
 /*FORM DE META*/
 /**/

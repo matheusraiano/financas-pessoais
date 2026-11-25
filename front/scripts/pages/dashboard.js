@@ -3,7 +3,7 @@ import { inicializarGraficos } from '../services/graficos.js';
 import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } from '../services/periodo.js';
 import { inicializarModal, abrirModal } from '../services/modal.js';
 import { formatarData, formatarValor } from '../services/utils.js';
-
+import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
 
 export async function inicializarDashboard(cleanupFunctions) {
@@ -53,6 +53,7 @@ export async function inicializarDashboard(cleanupFunctions) {
                 valor: document.getElementById('valor').value,
                 tipo: selectTipo.value,
                 categoria: selectCategoria.value,
+                descricao: document.getElementById('descricao').value || null,
                 data: dataTransacao
             })
         });
@@ -112,6 +113,7 @@ async function carregarTransacoes(ano, mes) {
                 <div class="transacao-info">
                     <strong>${t.categoria}</strong>
                     <span>${formatarData(t.data)}${dataEdicao}</span>
+                    ${t.descricao ? `<span class="transacao-descricao">${t.descricao}</span>` : ''}
                 </div>
                 <div class="transacao-valor ${t.tipo}">
                     ${t.tipo === 'receita' ? '+' : '-'} ${formatarValor(t.valor)}
@@ -196,31 +198,3 @@ async function carregarCategorias(selectCategoria, selectTipo) {
     }
 }
 
-async function verificarBadgeNotificacoes() {
-    try {
-        const { ano, mes } = getPeriodo();
-        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
-        const notificacoes = await res.json();
-
-        const naoLidas = notificacoes.filter(n => !n.lida).length;
-        let badge = document.getElementById('badge-notificacoes');
-
-        if (!badge) {
-            const navItem = document.querySelector('[data-page="notificacoes.html"]');
-            if (!navItem) return;
-            badge = document.createElement('span');
-            badge.id = 'badge-notificacoes';
-            badge.className = 'badge-notif';
-            navItem.appendChild(badge);
-        }
-
-        if (naoLidas > 0) {
-            badge.textContent = naoLidas;
-            badge.style.display = 'inline-flex';
-        } else {
-            badge.style.display = 'none';
-        }
-    } catch {
-        console.error('Erro ao verificar notificações');
-    }
-}
