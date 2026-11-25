@@ -1,5 +1,6 @@
 <section class="investimentos">
 
+    <!-- Resumo geral (custo) -->
     <div class="inv-resumo-geral">
         <div class="card-financeiro">
             <span>Total Investido</span>
@@ -12,6 +13,70 @@
         <div class="card-financeiro">
             <span>Renda Variável</span>
             <h2 id="inv-renda-variavel">R$ 0,00</h2>
+        </div>
+    </div>
+
+    <!-- Resumo de rentabilidade da carteira (mercado) -->
+    <div class="inv-rentabilidade-carteira dashboard-box" id="bloco-rentabilidade-carteira" style="display:none;">
+        <div class="rent-carteira-header">
+            <h3>Rentabilidade da Carteira</h3>
+            <span id="rent-atualizado" class="rent-timestamp"></span>
+        </div>
+        <div class="rent-carteira-grid">
+            <div class="rent-item">
+                <span>Valor de Mercado</span>
+                <strong id="rent-valor-mercado">—</strong>
+            </div>
+            <div class="rent-item">
+                <span>Custo Total</span>
+                <strong id="rent-custo-total">—</strong>
+            </div>
+            <div class="rent-item">
+                <span>Ganho / Perda</span>
+                <strong id="rent-ganho-reais">—</strong>
+            </div>
+            <div class="rent-item">
+                <span>Rentabilidade</span>
+                <strong id="rent-ganho-percent">—</strong>
+            </div>
+        </div>
+        <p id="rent-aviso-sem-cotacao" class="rent-aviso" style="display:none;"></p>
+    </div>
+
+    <!-- CDI atual + simulador de renda fixa -->
+    <div class="dashboard-box inv-cdi-bloco">
+        <div class="inv-cdi-header">
+            <h3>CDI Atual</h3>
+            <div id="cdi-info" class="cdi-info">
+                <span id="cdi-anual">—</span>
+                <span class="cdi-label">ao ano</span>
+                <span id="cdi-diario" class="cdi-diario"></span>
+            </div>
+        </div>
+        <div class="inv-simulador">
+            <h4>Simulador de Renda Fixa</h4>
+            <div class="simulador-form">
+                <div class="grupo-form">
+                    <input type="number" id="sim-valor" placeholder="Valor investido (R$)">
+                    <input type="number" id="sim-taxa" placeholder="% do CDI (ex: 110)" value="100">
+                    <input type="number" id="sim-dias" placeholder="Dias corridos" value="365">
+                </div>
+                <button id="btn-simular" class="btn-simular">Simular</button>
+            </div>
+            <div id="simulador-resultado" class="simulador-resultado" style="display:none;">
+                <div class="sim-item">
+                    <span>Valor Final</span>
+                    <strong id="sim-valor-final">—</strong>
+                </div>
+                <div class="sim-item">
+                    <span>Rendimento</span>
+                    <strong id="sim-rendimento">—</strong>
+                </div>
+                <div class="sim-item">
+                    <span>Rentabilidade</span>
+                    <strong id="sim-rentabilidade">—</strong>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -29,6 +94,16 @@
                     </div>
                 </div>
                 <div id="cards-ativos"></div>
+            </div>
+
+            <!-- Gráfico de evolução do ativo selecionado -->
+            <div class="dashboard-box" id="bloco-grafico-ativo" style="display:none;">
+                <div class="inv-header-lista">
+                    <h3 id="grafico-ativo-titulo">Evolução do Preço</h3>
+                    <button id="btn-fechar-grafico" class="btn-fechar-grafico">✕</button>
+                </div>
+                <canvas id="graficoEvolucaoAtivo"></canvas>
+                <div id="grafico-preco-medio-info" class="grafico-preco-info"></div>
             </div>
 
             <div class="dashboard-box">
@@ -53,7 +128,7 @@
                         </select>
                     </div>
                     <div class="grupo-form">
-                        <input type="text" id="inv-nome" placeholder="Nome do ativo (ex: PETR4)" required>
+                        <input type="text" id="inv-nome" placeholder="Nome do ativo (ex: MXRF11)" required>
                     </div>
                     <div class="grupo-form">
                         <input type="number" id="inv-valor" placeholder="Valor (R$)" required>

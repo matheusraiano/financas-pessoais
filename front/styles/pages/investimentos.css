@@ -10,13 +10,170 @@ section.investimentos {
 }
 
 /**/
-/*RESUMO GERAL*/
+/*RESUMO GERAL (custo)*/
 /**/
 
 .inv-resumo-geral {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+}
+
+/**/
+/*RENTABILIDADE DA CARTEIRA*/
+/**/
+
+.inv-rentabilidade-carteira {
+    animation: fadeIn 0.3s ease;
+}
+
+.rent-carteira-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.rent-carteira-header h3 {
+    margin: 0;
+}
+
+.rent-timestamp {
+    color: #444;
+    font-size: 11px;
+}
+
+.rent-carteira-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.rent-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.rent-item span {
+    color: #666;
+    font-size: 12px;
+}
+
+.rent-item strong {
+    font-size: 18px;
+}
+
+.rent-aviso {
+    margin: 12px 0 0;
+    color: #888;
+    font-size: 12px;
+    padding: 8px 12px;
+    background: rgba(255,200,0,0.05);
+    border: 1px solid rgba(255,200,0,0.15);
+    border-radius: 8px;
+}
+
+/**/
+/*CDI E SIMULADOR*/
+/**/
+
+.inv-cdi-bloco {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.inv-cdi-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inv-cdi-header h3 {
+    margin: 0;
+}
+
+.cdi-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#cdi-anual {
+    font-size: 22px;
+    font-weight: 700;
+    color: #00ff88;
+}
+
+.cdi-label {
+    color: #666;
+    font-size: 12px;
+}
+
+.cdi-diario {
+    color: #444;
+    font-size: 11px;
+}
+
+.inv-simulador h4 {
+    margin: 0 0 14px;
+    color: #aaa;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.simulador-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-simular {
+    background: var(--roxo);
+    border: none;
+    padding: 11px 20px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    align-self: flex-start;
+}
+
+.btn-simular:hover {
+    background: var(--roxoClaro);
+}
+
+.simulador-resultado {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(0,255,136,0.04);
+    border: 1px solid rgba(0,255,136,0.12);
+    border-radius: 10px;
+    animation: fadeIn 0.25s ease;
+}
+
+.sim-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sim-item span {
+    color: #666;
+    font-size: 12px;
+}
+
+.sim-item strong {
+    color: #00ff88;
+    font-size: 16px;
 }
 
 /**/
@@ -90,11 +247,137 @@ section.investimentos {
 .card-ativo-detalhes {
     display: flex;
     gap: 16px;
+    margin-bottom: 12px;
 }
 
 .card-ativo-detalhes span {
     color: #666;
     font-size: 12px;
+}
+
+/**/
+/*RENTABILIDADE POR ATIVO*/
+/**/
+
+.card-ativo-rentabilidade {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 12px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rent-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.rent-label {
+    color: #666;
+}
+
+.rent-preco {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rent-var {
+    font-size: 11px;
+    padding: 2px 7px;
+    border-radius: 20px;
+}
+
+.rent-var.positivo {
+    background: rgba(0,255,136,0.1);
+    color: #00ff88;
+}
+
+.rent-var.negativo {
+    background: rgba(255,77,109,0.1);
+    color: #ff4d6d;
+}
+
+.rent-dividendo {
+    border-top: 1px solid rgba(255,255,255,0.04);
+    padding-top: 6px;
+    margin-top: 2px;
+}
+
+/**/
+/*CORES GANHO/PERDA*/
+/**/
+
+.positivo {
+    color: #00ff88;
+    font-weight: 600;
+}
+
+.negativo {
+    color: #ff4d6d;
+    font-weight: 600;
+}
+
+/**/
+/*BOTÃO VER GRÁFICO*/
+/**/
+
+.btn-ver-grafico {
+    margin-top: 10px;
+    background: transparent;
+    border: 1px solid rgba(194,55,194,0.3);
+    color: var(--roxoClaro);
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+    align-self: flex-start;
+}
+
+.btn-ver-grafico:hover {
+    background: var(--roxoTransparente);
+    border-color: var(--roxoClaro);
+}
+
+/**/
+/*BLOCO DO GRÁFICO*/
+/**/
+
+.btn-fechar-grafico {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #888;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-fechar-grafico:hover {
+    border-color: #ff4d6d;
+    color: #ff4d6d;
+}
+
+.grafico-preco-info {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+}
+
+.cotacao-indisponivel {
+    color: #555;
+    font-size: 12px;
+    font-style: italic;
+    margin: 8px 0 0;
+    padding: 6px 10px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
 }
 
 /**/

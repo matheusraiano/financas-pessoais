@@ -196,6 +196,15 @@ Abra o arquivo `front/index.html` com um servidor local (ex: Live Server no VS C
 | PATCH | `/api/notificacoes/todas/lidas` | Marca todas como lidas |
 | GET | `/api/busca?q=` | Busca global |
 
+### Cotações (Brapi + BCB)
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/cotacoes` | Cotação atual + ganho/perda de todos os ativos de renda variável |
+| GET | `/api/cotacoes/cdi` | Taxa CDI atual (BCB) + simulador opcional de renda fixa |
+| GET | `/api/cotacoes/resumo-carteira` | Valor de mercado total da carteira vs. custo |
+| GET | `/api/cotacoes/:ticker/historico` | Histórico de preços diários desde o primeiro aporte |
+
 ---
 
 ## 📄 Licença
