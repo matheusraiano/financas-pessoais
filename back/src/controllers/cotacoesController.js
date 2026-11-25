@@ -1,33 +1,31 @@
 import pool from '../database/connection.js';
 
+// Brapi: cotação atual (token obrigatório no plano gratuito)
+const BRAPI_BASE = 'https://brapi.dev/api';
+const BRAPI_TOKEN = process.env.BRAPI_TOKEN;
+const BRAPI_HEADERS = BRAPI_TOKEN ? { Authorization: `Bearer ${BRAPI_TOKEN}` } : {};
+
+// Yahoo Finance: histórico longo + dividendos (sem token)
 const YAHOO_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart';
-const BCB_CDI_URL = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados/ultimos/1?formato=json';
 const YAHOO_HEADERS = { 'User-Agent': 'Mozilla/5.0' };
 
-// Cache em memória: { [chave]: { data, expiry } }
+// BCB: CDI
+const BCB_CDI_URL = 'https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados/ultimos/1?formato=json';
+
+// Cache em memória
 const cache = {};
 const CACHE_TTL = 15 * 60 * 1000; // 15 minutos
 
 function agora() { return Date.now(); }
+function doCache(chave, data) { cache[chave] = { data, expiry: agora() + CACHE_TTL }; return data; }
+function getCache(chave) { const c = cache[chave]; return c && agora() < c.expiry ? c.data : null; }
 
-function doCache(chave, data) {
-    cache[chave] = { data, expiry: agora() + CACHE_TTL };
-    return data;
-}
-
-function getCache(chave) {
-    const c = cache[chave];
-    return c && agora() < c.expiry ? c.data : null;
-}
-
-// O Yahoo Finance usa o sufixo .SA para ativos da B3
+// Yahoo usa sufixo .SA para ativos da B3
 function tickerYahoo(ticker) {
-    // já tem sufixo ou é índice
-    if (ticker.includes('.') || ticker.startsWith('^')) return ticker;
-    return `${ticker}.SA`;
+    return ticker.includes('.') || ticker.startsWith('^') ? ticker : `${ticker}.SA`;
 }
 
-// ─── CDI ───────────────────────────────────────────────────────────────────────
+// ─── CDI (BCB) ────────────────────────────────────────────────────────────────
 
 async function buscarCdi() {
     const cached = getCache('cdi');
@@ -37,7 +35,6 @@ async function buscarCdi() {
         const res = await fetch(BCB_CDI_URL);
         const json = await res.json();
         const diaria = parseFloat(json[0].valor);
-        // taxa diária em % → anual: (1 + d/100)^252 - 1
         const anual = (Math.pow(1 + diaria / 100, 252) - 1) * 100;
         return doCache('cdi', { diaria, anual: parseFloat(anual.toFixed(2)) });
     } catch {
@@ -45,67 +42,79 @@ async function buscarCdi() {
     }
 }
 
-// ─── Cotação atual via Yahoo Finance ──────────────────────────────────────────
+// ─── Cotação atual (Brapi) ────────────────────────────────────────────────────
 
 async function buscarPrecoAtual(ticker) {
     const chave = `preco_${ticker}`;
     const cached = getCache(chave);
     if (cached) return cached;
 
-    const symbol = tickerYahoo(ticker);
-    const url = `${YAHOO_BASE}/${symbol}?interval=1d&range=5d&events=dividends`;
-
     try {
-        const res = await fetch(url, { headers: YAHOO_HEADERS });
+        const url = `${BRAPI_BASE}/quote/${ticker}`;
+        const res = await fetch(url, { headers: BRAPI_HEADERS });
         if (!res.ok) return null;
 
         const json = await res.json();
-        const result = json.chart?.result?.[0];
-        if (!result) return null;
-
-        const meta = result.meta;
-
-        // último dividendo pago
-        const divs = result.events?.dividends;
-        let ultimoDividendo = null;
-        if (divs) {
-            const entradas = Object.values(divs).sort((a, b) => b.date - a.date);
-            if (entradas.length > 0) {
-                ultimoDividendo = {
-                    valor: entradas[0].amount,
-                    data: new Date(entradas[0].date * 1000).toISOString().split('T')[0]
-                };
-            }
-        }
+        const r = json.results?.[0];
+        if (!r || !r.regularMarketPrice) return null;
 
         return doCache(chave, {
             ticker,
-            nome: meta.longName || meta.shortName || ticker,
-            preco: meta.regularMarketPrice,
-            variacaoDia: parseFloat((meta.regularMarketChangePercent || 0).toFixed(2)),
-            abertura: meta.regularMarketOpen,
-            maxDia: meta.regularMarketDayHigh,
-            minDia: meta.regularMarketDayLow,
-            volumeDia: meta.regularMarketVolume,
-            ultimoDividendo,
-            atualizadoEm: meta.regularMarketTime
+            nome: r.longName || r.shortName || ticker,
+            preco: r.regularMarketPrice,
+            variacaoDia: parseFloat((r.regularMarketChangePercent || 0).toFixed(2)),
+            abertura: r.regularMarketOpen,
+            maxDia: r.regularMarketDayHigh,
+            minDia: r.regularMarketDayLow,
+            volumeDia: r.regularMarketVolume,
+            atualizadoEm: r.regularMarketTime
         });
     } catch {
         return null;
     }
 }
 
-// ─── Histórico de preços via Yahoo Finance ─────────────────────────────────────
+// ─── Dividendos (Yahoo Finance) ───────────────────────────────────────────────
+
+async function buscarUltimoDividendo(ticker) {
+    const chave = `div_${ticker}`;
+    const cached = getCache(chave);
+    if (cached) return cached;
+
+    try {
+        const symbol = tickerYahoo(ticker);
+        // range=1y é suficiente para pegar dividendos recentes
+        const url = `${YAHOO_BASE}/${symbol}?interval=1mo&range=1y&events=dividends`;
+        const res = await fetch(url, { headers: YAHOO_HEADERS });
+        if (!res.ok) return doCache(chave, null);
+
+        const json = await res.json();
+        const divs = json.chart?.result?.[0]?.events?.dividends;
+        if (!divs) return doCache(chave, null);
+
+        const ultimo = Object.values(divs).sort((a, b) => b.date - a.date)[0];
+        return doCache(chave, {
+            valor: ultimo.amount,
+            data: new Date(ultimo.date * 1000).toISOString().split('T')[0]
+        });
+    } catch {
+        return doCache(chave, null);
+    }
+}
+
+// ─── Histórico de preços (Yahoo Finance) ─────────────────────────────────────
 
 async function buscarHistoricoPrecos(ticker, startDate) {
     const chave = `hist_${ticker}_${startDate}`;
     const cached = getCache(chave);
     if (cached) return cached;
 
-    const symbol = tickerYahoo(ticker);
-    const url = `${YAHOO_BASE}/${symbol}?interval=1d&period1=${toUnixTs(startDate)}&period2=${Math.floor(agora() / 1000)}&events=dividends`;
-
     try {
+        const symbol = tickerYahoo(ticker);
+        const period1 = Math.floor(new Date(startDate).getTime() / 1000);
+        const period2 = Math.floor(agora() / 1000);
+        const url = `${YAHOO_BASE}/${symbol}?interval=1d&period1=${period1}&period2=${period2}`;
+
         const res = await fetch(url, { headers: YAHOO_HEADERS });
         if (!res.ok) return [];
 
@@ -129,15 +138,11 @@ async function buscarHistoricoPrecos(ticker, startDate) {
     }
 }
 
-function toUnixTs(dataStr) {
-    return Math.floor(new Date(dataStr).getTime() / 1000);
-}
-
 // ─── Endpoints ────────────────────────────────────────────────────────────────
 
 /**
  * GET /api/cotacoes
- * Cotação atual + ganho/perda para todos os ativos de renda variável.
+ * Cotação atual (Brapi) + dividendos (Yahoo) + cálculo de ganho/perda por ativo.
  */
 export async function listarCotacoes(req, res) {
     try {
@@ -155,10 +160,15 @@ export async function listarCotacoes(req, res) {
         if (ativos.length === 0) return res.json([]);
 
         const resultados = await Promise.all(ativos.map(async (ativo) => {
-            const cotacao = await buscarPrecoAtual(ativo.nome);
             const custoTotal = Number(ativo.custo_total);
             const totalCotas = Number(ativo.total_cotas) || null;
             const precoMedio = totalCotas > 0 ? custoTotal / totalCotas : null;
+
+            // cotação e dividendo em paralelo
+            const [cotacao, ultimoDividendo] = await Promise.all([
+                buscarPrecoAtual(ativo.nome),
+                buscarUltimoDividendo(ativo.nome)
+            ]);
 
             if (!cotacao) {
                 return {
@@ -166,18 +176,18 @@ export async function listarCotacoes(req, res) {
                     cotacao_encontrada: false,
                     custo_total: custoTotal,
                     total_cotas: totalCotas,
-                    preco_medio: precoMedio
+                    preco_medio: precoMedio ? parseFloat(precoMedio.toFixed(2)) : null
                 };
             }
 
             const precoAtual = cotacao.preco;
-            const valorAtual = totalCotas ? totalCotas * precoAtual : null;
-            const ganhoReais = valorAtual !== null ? valorAtual - custoTotal : null;
+            const valorAtual = totalCotas ? parseFloat((totalCotas * precoAtual).toFixed(2)) : null;
+            const ganhoReais = valorAtual !== null ? parseFloat((valorAtual - custoTotal).toFixed(2)) : null;
             const ganhoPercent = ganhoReais !== null && custoTotal > 0
                 ? parseFloat(((ganhoReais / custoTotal) * 100).toFixed(2))
                 : null;
-            const rendimentoMensal = cotacao.ultimoDividendo && totalCotas
-                ? parseFloat((totalCotas * cotacao.ultimoDividendo.valor).toFixed(2))
+            const rendimentoMensal = ultimoDividendo && totalCotas
+                ? parseFloat((totalCotas * ultimoDividendo.valor).toFixed(2))
                 : null;
 
             return {
@@ -189,10 +199,10 @@ export async function listarCotacoes(req, res) {
                 preco_medio: precoMedio ? parseFloat(precoMedio.toFixed(2)) : null,
                 preco_atual: precoAtual,
                 variacao_dia: cotacao.variacaoDia,
-                valor_atual: valorAtual ? parseFloat(valorAtual.toFixed(2)) : null,
-                ganho_reais: ganhoReais ? parseFloat(ganhoReais.toFixed(2)) : null,
+                valor_atual: valorAtual,
+                ganho_reais: ganhoReais,
                 ganho_percent: ganhoPercent,
-                ultimo_dividendo: cotacao.ultimoDividendo,
+                ultimo_dividendo: ultimoDividendo,
                 rendimento_mensal_estimado: rendimentoMensal,
                 atualizadoEm: cotacao.atualizadoEm
             };
@@ -207,7 +217,7 @@ export async function listarCotacoes(req, res) {
 
 /**
  * GET /api/cotacoes/:ticker/historico
- * Histórico de preços desde o primeiro aporte, com preço médio.
+ * Histórico de preços (Yahoo) desde o primeiro aporte + preço médio.
  */
 export async function historicoAtivo(req, res) {
     try {
@@ -249,7 +259,7 @@ export async function historicoAtivo(req, res) {
 
 /**
  * GET /api/cotacoes/cdi
- * Taxa CDI atual + simulador opcional de renda fixa.
+ * Taxa CDI atual (BCB) + simulador opcional de renda fixa.
  * Query: valor, taxa (% do CDI, default 100), dias
  */
 export async function taxaCdi(req, res) {
@@ -285,7 +295,7 @@ export async function taxaCdi(req, res) {
 
 /**
  * GET /api/cotacoes/resumo-carteira
- * Valor de mercado total vs custo.
+ * Valor de mercado total (renda variável via Brapi + renda fixa por custo).
  */
 export async function resumoCarteira(req, res) {
     try {
@@ -327,7 +337,7 @@ export async function resumoCarteira(req, res) {
         const custoFixa = Number(fixaRow[0].custo_total) || 0;
         const custoTotal = custoTotalVariavel + custoFixa;
         const valorMercadoTotal = valorMercadoVariavel + custoFixa;
-        const ganhoReais = valorMercadoTotal - custoTotal;
+        const ganhoReais = parseFloat((valorMercadoTotal - custoTotal).toFixed(2));
         const ganhoPercent = custoTotal > 0
             ? parseFloat(((ganhoReais / custoTotal) * 100).toFixed(2))
             : 0;
@@ -335,7 +345,7 @@ export async function resumoCarteira(req, res) {
         res.json({
             custo_total: parseFloat(custoTotal.toFixed(2)),
             valor_mercado: parseFloat(valorMercadoTotal.toFixed(2)),
-            ganho_reais: parseFloat(ganhoReais.toFixed(2)),
+            ganho_reais: ganhoReais,
             ganho_percent: ganhoPercent,
             ativos_sem_cotacao: ativosSemCotacao,
             renda_fixa_custo: parseFloat(custoFixa.toFixed(2)),
