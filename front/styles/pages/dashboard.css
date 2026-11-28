@@ -464,3 +464,101 @@ span.data-edicao {
 .btn-deletar-categoria:hover {
     opacity: 1;
 }
+/* ─── Recorrências ────────────────────────────────────────────────────────── */
+
+.recorr-subtitulo {
+    color: var(--textosP);
+    font-size: 0.85rem;
+    margin: 0 0 12px;
+}
+
+.recorr-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--bordaCinza);
+    margin-bottom: 8px;
+    transition: opacity 0.3s;
+}
+
+.recorr-item.recorr-inativa {
+    opacity: 0.45;
+}
+
+.recorr-item.saindo {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.recorr-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.recorr-info strong {
+    font-size: 0.95rem;
+}
+
+.recorr-info span {
+    font-size: 0.8rem;
+    color: var(--textosP);
+}
+
+.recorr-acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recorr-valor {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.recorr-valor.receita { color: #00ff88; }
+.recorr-valor.despesa { color: #ff4d6d; }
+
+.btn-toggle-recorr,
+.btn-deletar-recorr {
+    background: transparent;
+    border: 1px solid var(--bordaCinza);
+    color: #aaa;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.btn-toggle-recorr:hover { background: rgba(255,255,255,0.08); }
+.btn-deletar-recorr:hover { background: rgba(255,77,109,0.15); color: #ff4d6d; }
+
+.recorr-vazio {
+    color: var(--textosP);
+    font-size: 0.9rem;
+    padding: 8px 0;
+}
+
+/* Saldo previsto */
+.card-financeiro.previsao {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.previsao-label {
+    font-size: 0.7rem;
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    border-radius: 4px;
+    padding: 1px 5px;
+    margin-left: 4px;
+}
+
+.previsao-detalhes {
+    font-size: 0.75rem;
+    color: var(--textosP);
+}

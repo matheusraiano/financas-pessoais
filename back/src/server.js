@@ -9,6 +9,8 @@ import notificacoesRouter from './routes/notificacoes.js';
 import investimentosRouter from './routes/investimentos.js';
 import buscaRouter from './routes/busca.js';
 import cotacoesRouter from './routes/cotacoes.js';
+import recorrenciasRouter from './routes/recorrencias.js';
+import { migrar } from './controllers/recorrenciasController.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,7 +38,16 @@ app.use('/api/notificacoes', notificacoesRouter);
 app.use('/api/investimentos', investimentosRouter);
 app.use('/api/busca', buscaRouter);
 app.use('/api/cotacoes', cotacoesRouter);
+app.use('/api/recorrencias', recorrenciasRouter);
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+// Migration e start
+migrar()
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Servidor rodando em http://localhost:${PORT}`);
+        });
+    })
+    .catch(e => {
+        console.error('Falha na migration:', e);
+        process.exit(1);
+    });

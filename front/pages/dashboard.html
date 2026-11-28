@@ -19,6 +19,11 @@
             <span>Investimentos</span>
             <h2 id="investimentos-total">R$ 0,00</h2>
         </div>
+        <div class="card-financeiro previsao" id="card-previsao" style="display:none;">
+            <span>Saldo Previsto <span class="previsao-label">estimado</span></span>
+            <h2 id="saldo-previsto">R$ 0,00</h2>
+            <small id="previsao-detalhes" class="previsao-detalhes"></small>
+        </div>
     </div>
     <div class="dashboard-grid">
         <div class="dashboard-box">
@@ -53,6 +58,31 @@
             <button type="submit">Adicionar Transação</button>
         </form>
     </div>
+
+    <!-- ─── Recorrências ──────────────────────────────────────────────── -->
+    <div class="dashboard-box">
+        <h3>Recorrências</h3>
+        <p class="recorr-subtitulo">Lançamentos automáticos todo mês (salário, aluguel, contas fixas).</p>
+        <form id="form-recorrencia">
+            <div class="grupo-form">
+                <input type="number" id="recorr-valor" placeholder="Valor" step="0.01" required>
+                <select id="recorr-tipo">
+                    <option value="receita">Receita</option>
+                    <option value="despesa">Despesa</option>
+                </select>
+            </div>
+            <div class="grupo-form">
+                <select id="recorr-categoria"></select>
+                <input type="number" id="recorr-dia" placeholder="Dia do mês (1–28)" min="1" max="28" required>
+            </div>
+            <div class="grupo-form">
+                <input type="text" id="recorr-descricao" placeholder="Descrição (opcional)">
+            </div>
+            <button type="submit">Adicionar Recorrência</button>
+        </form>
+        <div id="lista-recorrencias" style="margin-top:16px;"></div>
+    </div>
+
     <div class="dashboard-box">
         <h3>Nova Categoria</h3>
         <form id="form-categoria">

@@ -6,6 +6,14 @@ import { formatarData, formatarValor } from '../services/utils.js';
 import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
 import { getHeaders } from '../services/auth.js';
+import {
+    listarRecorrencias,
+    criarRecorrencia,
+    toggleRecorrencia,
+    deletarRecorrencia,
+    processarRecorrencias,
+    previsaoSaldo
+} from '../services/recorrencias.js';
 
 export async function inicializarDashboard(cleanupFunctions) {
     console.log('Dashboard carregado');
@@ -73,11 +81,39 @@ export async function inicializarDashboard(cleanupFunctions) {
         await popularSelectCategorias(selectCategoria, selectTipo.value);
         if (categoriasVisiveis) await carregarCategorias(selectCategoria, selectTipo);
     });
+
+    // ─── Form recorrências ────────────────────────────────────────────────
+    const selectRecorrTipo = document.getElementById('recorr-tipo');
+    const selectRecorrCat = document.getElementById('recorr-categoria');
+    await popularSelectCategorias(selectRecorrCat, selectRecorrTipo.value);
+
+    selectRecorrTipo.addEventListener('change', () => {
+        popularSelectCategorias(selectRecorrCat, selectRecorrTipo.value);
+    });
+
+    document.getElementById('form-recorrencia').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await criarRecorrencia({
+            valor: document.getElementById('recorr-valor').value,
+            tipo: selectRecorrTipo.value,
+            categoria: selectRecorrCat.value,
+            dia_do_mes: document.getElementById('recorr-dia').value,
+            descricao: document.getElementById('recorr-descricao').value || null
+        });
+        e.target.reset();
+        await popularSelectCategorias(selectRecorrCat, selectRecorrTipo.value);
+        await carregarListaRecorrencias();
+    });
+
+    await carregarListaRecorrencias();
 }
 
 async function atualizarTudo() {
     const { ano, mes } = getPeriodo();
+    // Processa recorrências do mês ao carregar
+    await processarRecorrencias(ano, mes);
     await carregarResumo(ano, mes);
+    await carregarPrevisao(ano, mes);
     await carregarTransacoes(ano, mes);
     await inicializarGraficos(ano, mes);
     await carregarInvestimentos();
@@ -138,6 +174,77 @@ async function carregarInvestimentos() {
         document.getElementById('investimentos-total').textContent = formatarValor(total);
     } catch (e) {
         console.error('Erro ao carregar investimentos:', e);
+    }
+}
+
+async function carregarPrevisao(ano, mes) {
+    try {
+        const data = await previsaoSaldo(ano, mes);
+        const card = document.getElementById('card-previsao');
+        const el = document.getElementById('saldo-previsto');
+        const detalhes = document.getElementById('previsao-detalhes');
+
+        // Só exibe o card se houver recorrências previstas
+        if (data.receitas_previstas > 0 || data.despesas_previstas > 0) {
+            card.style.display = 'flex';
+            el.textContent = formatarValor(data.saldo_previsto);
+            el.style.color = data.saldo_previsto >= 0 ? '#00ff88' : '#ff4d6d';
+            detalhes.textContent = `+${formatarValor(data.receitas_previstas)} receitas / -${formatarValor(data.despesas_previstas)} despesas previstas`;
+        } else {
+            card.style.display = 'none';
+        }
+    } catch {
+        // falha silenciosa — card permanece oculto
+    }
+}
+
+async function carregarListaRecorrencias() {
+    try {
+        const recorrencias = await listarRecorrencias();
+        const container = document.getElementById('lista-recorrencias');
+        container.innerHTML = '';
+
+        if (recorrencias.length === 0) {
+            container.innerHTML = '<p class="recorr-vazio">Nenhuma recorrência cadastrada.</p>';
+            return;
+        }
+
+        recorrencias.forEach(r => {
+            const div = document.createElement('div');
+            div.className = `recorr-item ${!r.ativa ? 'recorr-inativa' : ''}`;
+            div.innerHTML = `
+                <div class="recorr-info">
+                    <strong>${r.descricao || r.categoria}</strong>
+                    <span>Dia ${r.dia_do_mes} &bull; ${r.categoria} &bull;
+                        <span class="badge-tipo ${r.tipo}">${r.tipo === 'receita' ? 'Receita' : 'Despesa'}</span>
+                        ${!r.ativa ? '<span class="badge-inativa">Inativa</span>' : ''}
+                    </span>
+                </div>
+                <div class="recorr-acoes">
+                    <span class="recorr-valor ${r.tipo}">${r.tipo === 'receita' ? '+' : '-'} ${formatarValor(r.valor)}</span>
+                    <button class="btn-toggle-recorr" data-id="${r.id}" title="${r.ativa ? 'Desativar' : 'Ativar'}">
+                        ${r.ativa ? '⏸' : '▶'}
+                    </button>
+                    <button class="btn-deletar-recorr" data-id="${r.id}" title="Deletar">✕</button>
+                </div>
+            `;
+
+            div.querySelector('.btn-toggle-recorr').addEventListener('click', async () => {
+                await toggleRecorrencia(r.id);
+                await carregarListaRecorrencias();
+            });
+
+            div.querySelector('.btn-deletar-recorr').addEventListener('click', async () => {
+                div.classList.add('saindo');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                await deletarRecorrencia(r.id);
+                await carregarListaRecorrencias();
+            });
+
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.error('Erro ao carregar recorrências:', e);
     }
 }
 
