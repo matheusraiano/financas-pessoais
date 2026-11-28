@@ -3,6 +3,8 @@ import { inicializarExtrato } from './pages/extrato.js';
 import { inicializarInvestimentos } from './pages/investimentos.js';
 import { inicializarNotificacoes } from './pages/notificacoes.js';
 import { inicializarBusca } from './services/busca.js';
+import { getSenha, setSenha, estaAutenticado, getHeaders } from './services/auth.js';
+import { API } from './services/config.js';
 
 const navItems = document.querySelectorAll('.nav-item');
 const conteudo = document.getElementById('conteudo-dinamico');
@@ -47,21 +49,93 @@ async function carregarPagina(pagina) {
     }
 }
 
-navItems.forEach(item => {
-    item.addEventListener('click', () => {
-        navItems.forEach(i => i.classList.remove('ativo'));
-        item.classList.add('ativo');
-        const pagina = item.dataset.page;
-        carregarPagina(pagina);
-        localStorage.setItem('paginaAtual', pagina);
+// ─── Login ───────────────────────────────────────────────────────────────────
+
+async function verificarSenha(senha) {
+    try {
+        // Testa a senha tentando chamar qualquer endpoint protegido
+        const res = await fetch(`${API}/categorias`, {
+            headers: { 'x-app-password': senha }
+        });
+        return res.ok;
+    } catch {
+        return false;
+    }
+}
+
+async function mostrarLogin() {
+    try {
+        const res = await fetch('pages/login.html');
+        const html = await res.text();
+        conteudo.innerHTML = html;
+    } catch {
+        conteudo.innerHTML = `
+            <section class="login-container">
+                <div class="login-box">
+                    <h2>Finanças Pessoais</h2>
+                    <form id="form-login">
+                        <div class="grupo-form">
+                            <input type="password" id="login-senha" placeholder="Senha" required>
+                        </div>
+                        <p id="login-erro" class="login-erro" style="display:none;">Senha incorreta.</p>
+                        <button type="submit" class="btn-login">Entrar</button>
+                    </form>
+                </div>
+            </section>
+        `;
+    }
+
+    document.getElementById('form-login').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const senha = document.getElementById('login-senha').value;
+        const btn = e.target.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'Verificando...';
+
+        const ok = await verificarSenha(senha);
+        if (ok) {
+            setSenha(senha);
+            inicializarApp();
+        } else {
+            document.getElementById('login-erro').style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Entrar';
+        }
     });
-});
+}
 
-const paginaSalva = localStorage.getItem('paginaAtual') || 'dashboard.html';
-carregarPagina(paginaSalva);
+function inicializarApp() {
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navItems.forEach(i => i.classList.remove('ativo'));
+            item.classList.add('ativo');
+            const pagina = item.dataset.page;
+            carregarPagina(pagina);
+            localStorage.setItem('paginaAtual', pagina);
+        });
+    });
 
-navItems.forEach(item => {
-    item.classList.toggle('ativo', item.dataset.page === paginaSalva);
-});
+    const paginaSalva = localStorage.getItem('paginaAtual') || 'dashboard.html';
+    carregarPagina(paginaSalva);
 
-inicializarBusca();
+    navItems.forEach(item => {
+        item.classList.toggle('ativo', item.dataset.page === paginaSalva);
+    });
+
+    inicializarBusca();
+}
+
+// ─── Boot ────────────────────────────────────────────────────────────────────
+
+if (estaAutenticado()) {
+    // Sessão ainda ativa — valida silenciosamente a senha salva
+    verificarSenha(getSenha()).then(ok => {
+        if (ok) {
+            inicializarApp();
+        } else {
+            mostrarLogin();
+        }
+    });
+} else {
+    mostrarLogin();
+}

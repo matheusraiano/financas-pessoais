@@ -2,6 +2,7 @@ import { popularSelectCategorias } from './categorias.js';
 import { formatarData } from '../services/utils.js';
 
 import { API } from './config.js';
+import { getHeaders } from './auth.js';
 let transacaoAtualId = null;
 let onSalvar = null;
 let onDeletar = null;
@@ -64,7 +65,7 @@ export function inicializarModal() {
         };
         await fetch(`${API}/transacoes/${transacaoAtualId}`, {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(dados)
         });
         fecharModal();
@@ -79,7 +80,7 @@ export function inicializarModal() {
             el.classList.add('saindo');
             await new Promise(r => setTimeout(r, 400));
         }
-        await fetch(`${API}/transacoes/${idParaDeletar}`, { method: 'DELETE' });
+        await fetch(`${API}/transacoes/${idParaDeletar}`, { method: 'DELETE', headers: getHeaders() });
         if (onDeletar) onDeletar();
     });
 }

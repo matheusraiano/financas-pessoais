@@ -1,4 +1,5 @@
 import { API } from './config.js';
+import { getHeaders } from './auth.js';
 
 let graficoFluxo = null;
 let graficoCategorias = null;
@@ -22,7 +23,7 @@ export async function inicializarGraficos(ano, mes) {
 }
 
 async function renderizarFluxo(ano, mes) {
-    const res = await fetch(`${API}/transacoes/fluxo?ano=${ano}`);
+    const res = await fetch(`${API}/transacoes/fluxo?ano=${ano}`, { headers: getHeaders() });
     const dados = await res.json();
 
     const labels = dados.map(d => {
@@ -99,7 +100,7 @@ async function renderizarFluxo(ano, mes) {
 }
 
 async function renderizarCategorias(ano, mes) {
-    const res = await fetch(`${API}/transacoes/categorias-gastos?ano=${ano}&mes=${mes}`);
+    const res = await fetch(`${API}/transacoes/categorias-gastos?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
     const dados = await res.json();
 
     const ctx = document.getElementById('graficoCategorias').getContext('2d');
@@ -148,7 +149,7 @@ async function renderizarCategorias(ano, mes) {
 }
 
 async function renderizarReceitasCategorias(ano, mes) {
-    const res = await fetch(`${API}/transacoes/receitas-categorias?ano=${ano}&mes=${mes}`);
+    const res = await fetch(`${API}/transacoes/receitas-categorias?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
     const dados = await res.json();
 
     const ctx = document.getElementById('graficoReceitasCategorias').getContext('2d');

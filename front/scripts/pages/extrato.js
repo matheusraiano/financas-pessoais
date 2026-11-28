@@ -3,6 +3,7 @@ import { inicializarCalendario, getPeriodo, onPeriodoMudou, removerListeners } f
 import { formatarData, formatarValor } from '../services/utils.js';
 import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
+import { getHeaders } from '../services/auth.js';
 
 let filtroTipo = 'todos';
 let filtroCategoria = 'todos';
@@ -48,7 +49,7 @@ async function atualizarExtrato() {
 
 async function carregarResumo(ano, mes) {
     try {
-        const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const { saldo, receitas, despesas } = await res.json();
         document.getElementById('ext-receitas').textContent = formatarValor(receitas);
         document.getElementById('ext-despesas').textContent = formatarValor(despesas);
@@ -65,7 +66,7 @@ async function carregarTransacoes(ano, mes) {
         if (filtroTipo !== 'todos') params.append('tipo', filtroTipo);
         if (filtroCategoria !== 'todos') params.append('categoria', filtroCategoria);
 
-        const res = await fetch(`${API}/transacoes?${params}`);
+        const res = await fetch(`${API}/transacoes?${params}`, { headers: getHeaders() });
         let transacoes = await res.json();
 
         const container = document.getElementById('lista-extrato');
@@ -108,7 +109,7 @@ async function carregarTransacoes(ano, mes) {
 
 async function popularFiltroCategoria() {
     try {
-        const res = await fetch(`${API}/categorias`);
+        const res = await fetch(`${API}/categorias`, { headers: getHeaders() });
         const categorias = await res.json();
         const select = document.getElementById('filtro-categoria');
         categorias.forEach(c => {
@@ -121,4 +122,3 @@ async function popularFiltroCategoria() {
         console.error('Erro ao carregar categorias:', e);
     }
 }
-

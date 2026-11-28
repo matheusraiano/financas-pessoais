@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import { autenticar } from './middleware/auth.js';
 import transacoesRouter from './routes/transacoes.js';
 import categoriasRouter from './routes/categorias.js';
 import metasRouter from './routes/metas.js';
@@ -19,10 +20,13 @@ app.use(express.json());
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, x-app-password');
     if (req.method === 'OPTIONS') return res.sendStatus(200);
     next();
 });
+
+// Autenticação
+app.use(autenticar);
 
 // Rotas
 app.use('/api/transacoes', transacoesRouter);

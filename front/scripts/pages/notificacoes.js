@@ -3,6 +3,7 @@ import { popularSelectCategorias } from '../services/categorias.js';
 import { formatarData, formatarValor } from '../services/utils.js';
 import { atualizarBadgeMenu } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
+import { getHeaders } from '../services/auth.js';
 
 export async function inicializarNotificacoes(cleanupFunctions) {
     console.log('Notificações carregado');
@@ -41,7 +42,7 @@ export async function inicializarNotificacoes(cleanupFunctions) {
 
         await fetch(`${API}/metas`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(body)
         });
 
@@ -54,7 +55,7 @@ export async function inicializarNotificacoes(cleanupFunctions) {
         const { ano, mes } = getPeriodo();
         await fetch(`${API}/notificacoes/todas/lidas`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ ano, mes })
         });
         await carregarNotificacoes();
@@ -69,7 +70,7 @@ async function atualizarTudo() {
 
 async function gerarECarregarNotificacoes(ano, mes) {
     try {
-        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/notificacoes/gerar?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const notificacoes = await res.json();
         renderizarNotificacoes(notificacoes);
         atualizarBadgeMenu(notificacoes);
@@ -81,7 +82,7 @@ async function gerarECarregarNotificacoes(ano, mes) {
 async function carregarNotificacoes() {
     try {
         const { ano, mes } = getPeriodo();
-        const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const notificacoes = await res.json();
         renderizarNotificacoes(notificacoes);
         atualizarBadgeMenu(notificacoes);
@@ -109,7 +110,7 @@ function renderizarNotificacoes(notificacoes) {
                 <span>${formatarData(n.criada_em)}</span>
             </div>
             <button class="btn-toggle-lida" data-id="${n.id}" data-lida="${n.lida}" title="${n.lida ? 'Marcar como não lida' : 'Marcar como lida'}">
-                ${n.lida ? '↺' : '✓'}
+                ${n.lida ? '↩' : '✓'}
             </button>
         `;
 
@@ -120,7 +121,7 @@ function renderizarNotificacoes(notificacoes) {
 
             await fetch(`${API}/notificacoes/${n.id}/toggle-lida`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getHeaders({ 'Content-Type': 'application/json' }),
                 body: JSON.stringify({ lida: !estaLida })
             });
             await carregarNotificacoes();
@@ -133,7 +134,7 @@ function renderizarNotificacoes(notificacoes) {
 async function carregarMetas() {
     try {
         const { ano, mes } = getPeriodo();
-        const res = await fetch(`${API}/metas?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/metas?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const metas = await res.json();
         const container = document.getElementById('lista-metas');
         container.innerHTML = '';
@@ -172,14 +173,14 @@ async function carregarMetas() {
                 const novaDescricao = prompt('Nova descrição (opcional):', btn.dataset.descricao);
                 await fetch(`${API}/metas/${btn.dataset.id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: getHeaders({ 'Content-Type': 'application/json' }),
                     body: JSON.stringify({ valor: novoValor, descricao: novaDescricao || null })
                 });
                 await atualizarTudo();
             });
 
             div.querySelector('.btn-deletar-meta').addEventListener('click', async () => {
-                await fetch(`${API}/metas/${m.id}`, { method: 'DELETE' });
+                await fetch(`${API}/metas/${m.id}`, { method: 'DELETE', headers: getHeaders() });
                 await atualizarTudo();
             });
 
@@ -189,4 +190,3 @@ async function carregarMetas() {
         console.error('Erro ao carregar metas:', e);
     }
 }
-

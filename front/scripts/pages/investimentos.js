@@ -2,6 +2,7 @@ import { formatarData, formatarValor } from '../services/utils.js';
 import { getPeriodo } from '../services/periodo.js';
 import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
+import { getHeaders } from '../services/auth.js';
 
 let filtroTipo = 'todos';
 let graficoEvolucao = null;
@@ -31,7 +32,7 @@ export async function inicializarInvestimentos(cleanupFunctions) {
 
         const res = await fetch(`${API}/investimentos`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 nome: document.getElementById('inv-nome').value,
                 tipo: document.getElementById('inv-tipo').value,
@@ -64,7 +65,7 @@ export async function inicializarInvestimentos(cleanupFunctions) {
         if (!valor || !dias) return;
 
         const params = new URLSearchParams({ valor, taxa: taxa || 100, dias });
-        const res = await fetch(`${API}/cotacoes/cdi?${params}`);
+        const res = await fetch(`${API}/cotacoes/cdi?${params}`, { headers: getHeaders() });
         const { simulacao } = await res.json();
 
         if (!simulacao) return;
@@ -97,11 +98,11 @@ async function atualizarTudo() {
     ]);
 }
 
-// ─── Total investido ───────────────────────────────────────────────────────────
+// ─── Total investido ────────────────────────────────────────────────────────
 
 async function carregarTotal() {
     try {
-        const res = await fetch(`${API}/investimentos/total`);
+        const res = await fetch(`${API}/investimentos/total`, { headers: getHeaders() });
         const { total, renda_fixa, renda_variavel } = await res.json();
         document.getElementById('inv-total').textContent = formatarValor(total);
         document.getElementById('inv-renda-fixa').textContent = formatarValor(renda_fixa);
@@ -111,11 +112,11 @@ async function carregarTotal() {
     }
 }
 
-// ─── Rentabilidade geral da carteira ──────────────────────────────────────────
+// ─── Rentabilidade geral da carteira ────────────────────────────────────────
 
 async function carregarRentabilidadeCarteira() {
     try {
-        const res = await fetch(`${API}/cotacoes/resumo-carteira`);
+        const res = await fetch(`${API}/cotacoes/resumo-carteira`, { headers: getHeaders() });
         if (!res.ok) return;
         const d = await res.json();
 
@@ -148,11 +149,11 @@ async function carregarRentabilidadeCarteira() {
     }
 }
 
-// ─── CDI ───────────────────────────────────────────────────────────────────────
+// ─── CDI ─────────────────────────────────────────────────────────────────────
 
 async function carregarCdi() {
     try {
-        const res = await fetch(`${API}/cotacoes/cdi`);
+        const res = await fetch(`${API}/cotacoes/cdi`, { headers: getHeaders() });
         const { cdi } = await res.json();
         document.getElementById('cdi-anual').textContent = `${cdi.anual}% a.a.`;
         document.getElementById('cdi-diario').textContent = `${cdi.diaria}% a.d.`;
@@ -161,13 +162,13 @@ async function carregarCdi() {
     }
 }
 
-// ─── Cards de ativos ───────────────────────────────────────────────────────────
+// ─── Cards de ativos ─────────────────────────────────────────────────────────
 
 async function carregarAtivos() {
     try {
         const [resumoRes, cotacoesRes] = await Promise.all([
-            fetch(`${API}/investimentos/resumo`),
-            fetch(`${API}/cotacoes`)
+            fetch(`${API}/investimentos/resumo`, { headers: getHeaders() }),
+            fetch(`${API}/cotacoes`, { headers: getHeaders() })
         ]);
 
         let ativos = await resumoRes.json();
@@ -278,7 +279,7 @@ async function carregarAtivos() {
     }
 }
 
-// ─── Gráfico de evolução ───────────────────────────────────────────────────────
+// ─── Gráfico de evolução ─────────────────────────────────────────────────────
 
 async function abrirGraficoEvolucao(ticker) {
     const bloco = document.getElementById('bloco-grafico-ativo');
@@ -293,7 +294,7 @@ async function abrirGraficoEvolucao(ticker) {
     if (graficoEvolucao) { graficoEvolucao.destroy(); graficoEvolucao = null; }
 
     try {
-        const res = await fetch(`${API}/cotacoes/${ticker}/historico`);
+        const res = await fetch(`${API}/cotacoes/${ticker}/historico`, { headers: getHeaders() });
         if (!res.ok) {
             info.textContent = 'Histórico não disponível para este ativo.';
             return;
@@ -322,7 +323,7 @@ async function abrirGraficoEvolucao(ticker) {
             Variação desde o aporte: <strong class="${positivo ? 'positivo' : 'negativo'}">
                 ${positivo ? '+' : ''}${variacaoDesdeAporte}%
             </strong>
-            ${total_cotas ? `&nbsp;|&nbsp; ${total_cotas} cotas &nbsp;·&nbsp; Posição: <strong>${formatarValor(total_cotas * precoAtual)}</strong>` : ''}
+            ${total_cotas ? `&nbsp;|&nbsp; ${total_cotas} cotas &nbsp;→&nbsp; Posição: <strong>${formatarValor(total_cotas * precoAtual)}</strong>` : ''}
         ` : '';
 
         const ctx = document.getElementById('graficoEvolucaoAtivo').getContext('2d');
@@ -392,14 +393,14 @@ async function abrirGraficoEvolucao(ticker) {
     }
 }
 
-// ─── Histórico de aportes ──────────────────────────────────────────────────────
+// ─── Histórico de aportes ────────────────────────────────────────────────────
 
 async function carregarAportes() {
     try {
         const params = new URLSearchParams();
         if (filtroTipo !== 'todos') params.append('tipo', filtroTipo);
 
-        const res = await fetch(`${API}/investimentos?${params}`);
+        const res = await fetch(`${API}/investimentos?${params}`, { headers: getHeaders() });
         const aportes = await res.json();
 
         const container = document.getElementById('lista-aportes');
@@ -418,8 +419,8 @@ async function carregarAportes() {
                 <div class="transacao-info">
                     <strong>${a.nome}</strong>
                     <span>${formatarData(a.data)}
-                        ${a.cotas ? ` · ${Number(a.cotas)} cotas` : ''}
-                        · <span class="badge-operacao ${a.operacao}">${a.operacao === 'aporte' ? 'Aporte' : 'Retirada'}</span>
+                        ${a.cotas ? ` — ${Number(a.cotas)} cotas` : ''}
+                        — <span class="badge-operacao ${a.operacao}">${a.operacao === 'aporte' ? 'Aporte' : 'Retirada'}</span>
                     </span>
                 </div>
                 <div style="display:flex; align-items:center; gap:12px;">
@@ -432,7 +433,7 @@ async function carregarAportes() {
             div.querySelector('.btn-deletar-aporte').addEventListener('click', async () => {
                 div.classList.add('saindo');
                 await new Promise(r => setTimeout(r, 400));
-                await fetch(`${API}/investimentos/${a.id}`, { method: 'DELETE' });
+                await fetch(`${API}/investimentos/${a.id}`, { method: 'DELETE', headers: getHeaders() });
                 await atualizarTudo();
             });
 

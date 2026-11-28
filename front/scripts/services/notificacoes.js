@@ -1,5 +1,6 @@
 import { API } from './config.js';
 import { getPeriodo } from './periodo.js';
+import { getHeaders } from './auth.js';
 
 /**
  * Busca as notificações já existentes (sem regenerar) e atualiza o badge do menu.
@@ -8,7 +9,7 @@ import { getPeriodo } from './periodo.js';
 export async function verificarBadgeNotificacoes() {
     try {
         const { ano, mes } = getPeriodo();
-        const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/notificacoes?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const notificacoes = await res.json();
         atualizarBadgeMenu(notificacoes);
     } catch {

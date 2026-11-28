@@ -5,6 +5,7 @@ import { inicializarModal, abrirModal } from '../services/modal.js';
 import { formatarData, formatarValor } from '../services/utils.js';
 import { verificarBadgeNotificacoes } from '../services/notificacoes.js';
 import { API } from '../services/config.js';
+import { getHeaders } from '../services/auth.js';
 
 export async function inicializarDashboard(cleanupFunctions) {
     console.log('Dashboard carregado');
@@ -48,7 +49,7 @@ export async function inicializarDashboard(cleanupFunctions) {
         const dataTransacao = `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
         await fetch(`${API}/transacoes`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 valor: document.getElementById('valor').value,
                 tipo: selectTipo.value,
@@ -85,7 +86,7 @@ async function atualizarTudo() {
 
 async function carregarResumo(ano, mes) {
     try {
-        const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/transacoes/resumo?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const { saldo, receitas, despesas } = await res.json();
         document.getElementById('saldo-total').textContent = formatarValor(saldo);
         document.getElementById('receitas-total').textContent = formatarValor(receitas);
@@ -97,7 +98,7 @@ async function carregarResumo(ano, mes) {
 
 async function carregarTransacoes(ano, mes) {
     try {
-        const res = await fetch(`${API}/transacoes?ano=${ano}&mes=${mes}`);
+        const res = await fetch(`${API}/transacoes?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
         const transacoes = await res.json();
         const container = document.getElementById('ultimas-transacoes');
         container.innerHTML = '';
@@ -132,7 +133,7 @@ async function carregarTransacoes(ano, mes) {
 
 async function carregarInvestimentos() {
     try {
-        const res = await fetch(`${API}/investimentos/total`);
+        const res = await fetch(`${API}/investimentos/total`, { headers: getHeaders() });
         const { total } = await res.json();
         document.getElementById('investimentos-total').textContent = formatarValor(total);
     } catch (e) {
@@ -142,7 +143,7 @@ async function carregarInvestimentos() {
 
 async function carregarCategorias(selectCategoria, selectTipo) {
     try {
-        const res = await fetch(`${API}/categorias?todas=true`);
+        const res = await fetch(`${API}/categorias?todas=true`, { headers: getHeaders() });
         const categorias = await res.json();
         const container = document.getElementById('lista-categorias');
         if (!container) return;
@@ -170,14 +171,14 @@ async function carregarCategorias(selectCategoria, selectTipo) {
 
             div.querySelector('.btn-toggle-categoria').addEventListener('click', async (e) => {
                 const btn = e.currentTarget;
-                await fetch(`${API}/categorias/${btn.dataset.id}/toggle`, { method: 'PATCH' });
+                await fetch(`${API}/categorias/${btn.dataset.id}/toggle`, { method: 'PATCH', headers: getHeaders() });
                 await carregarCategorias(selectCategoria, selectTipo);
                 await popularSelectCategorias(selectCategoria, selectTipo.value);
             });
 
             div.querySelector('.btn-deletar-categoria').addEventListener('click', async (e) => {
                 const id = e.currentTarget.dataset.id;
-                const res = await fetch(`${API}/categorias/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${API}/categorias/${id}`, { method: 'DELETE', headers: getHeaders() });
 
                 if (res.status === 409) {
                     const erro = await res.json();

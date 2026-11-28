@@ -1,6 +1,7 @@
 import { formatarData } from './utils.js';
 
 import { API } from './config.js';
+import { getHeaders } from './auth.js';
 
 export function inicializarBusca() {
     const input = document.querySelector('.header-center input');
@@ -41,7 +42,7 @@ async function executarBusca(termo) {
     container.innerHTML = '<p class="busca-carregando">Buscando...</p>';
 
     try {
-        const res = await fetch(`${API}/busca?q=${encodeURIComponent(termo)}`);
+        const res = await fetch(`${API}/busca?q=${encodeURIComponent(termo)}`, { headers: getHeaders() });
         const { transacoes, investimentos, categorias } = await res.json();
 
         const total = transacoes.length + investimentos.length + categorias.length;
