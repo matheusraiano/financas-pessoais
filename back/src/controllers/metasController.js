@@ -19,6 +19,51 @@ export async function listar(req, res) {
     }
 }
 
+export async function progressoOrcamentos(req, res) {
+    try {
+        const { ano, mes } = req.query;
+
+        if (!ano || !mes) {
+            return res.status(400).json({ erro: 'ano e mes são obrigatórios' });
+        }
+
+        // Busca só metas do tipo 'categoria' do mês
+        const [metas] = await pool.query(
+            `SELECT * FROM metas WHERE tipo = 'categoria' AND ano = ? AND mes = ?`,
+            [ano, mes]
+        );
+
+        const resultado = [];
+
+        for (const meta of metas) {
+            const [rows] = await pool.query(
+                `SELECT SUM(valor) AS gasto FROM transacoes
+                 WHERE tipo = 'despesa' AND categoria = ?
+                   AND YEAR(data) = ? AND MONTH(data) = ?`,
+                [meta.categoria, ano, mes]
+            );
+
+            const gasto = Number(rows[0].gasto) || 0;
+            const limite = Number(meta.valor);
+            const percentual = limite > 0 ? Math.round((gasto / limite) * 100) : 0;
+
+            resultado.push({
+                meta_id: meta.id,
+                categoria: meta.categoria,
+                limite,
+                gasto,
+                percentual,
+                ultrapassou: gasto > limite
+            });
+        }
+
+        res.json(resultado);
+    } catch (e) {
+        console.error('Erro ao calcular progresso dos orçamentos:', e);
+        res.status(500).json({ erro: 'Erro interno ao calcular progresso dos orçamentos' });
+    }
+}
+
 export async function criar(req, res) {
     try {
         const { tipo, categoria, valor, descricao, ano, mes } = req.body;

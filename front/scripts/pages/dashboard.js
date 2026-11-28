@@ -114,6 +114,7 @@ async function atualizarTudo() {
     await processarRecorrencias(ano, mes);
     await carregarResumo(ano, mes);
     await carregarPrevisao(ano, mes);
+    await carregarOrcamentos(ano, mes);
     await carregarTransacoes(ano, mes);
     await inicializarGraficos(ano, mes);
     await carregarInvestimentos();
@@ -174,6 +175,48 @@ async function carregarInvestimentos() {
         document.getElementById('investimentos-total').textContent = formatarValor(total);
     } catch (e) {
         console.error('Erro ao carregar investimentos:', e);
+    }
+}
+
+async function carregarOrcamentos(ano, mes) {
+    try {
+        const res = await fetch(`${API}/metas/progresso?ano=${ano}&mes=${mes}`, { headers: getHeaders() });
+        const orcamentos = await res.json();
+        const box = document.getElementById('box-orcamentos');
+        const container = document.getElementById('lista-orcamentos');
+
+        if (!orcamentos.length) {
+            box.style.display = 'none';
+            return;
+        }
+
+        box.style.display = 'block';
+        container.innerHTML = '';
+
+        orcamentos.forEach(o => {
+            const pct = Math.min(o.percentual, 100); // cap visual em 100%
+            let cor = '#00ff88';
+            if (o.percentual >= 100) cor = '#ff4d6d';
+            else if (o.percentual >= 80) cor = '#ffd700';
+
+            const div = document.createElement('div');
+            div.className = 'orcamento-item';
+            div.innerHTML = `
+                <div class="orcamento-header">
+                    <span>${o.categoria}</span>
+                    <span>${formatarValor(o.gasto)} / ${formatarValor(o.limite)}
+                        <span class="orcamento-pct" style="color:${cor}">${o.percentual}%</span>
+                    </span>
+                </div>
+                <div class="orcamento-barra">
+                    <div class="orcamento-progresso" style="width:${pct}%; background:${cor};"></div>
+                </div>
+                ${o.ultrapassou ? `<p class="orcamento-alerta">⚠️ Limite ultrapassado em ${formatarValor(o.gasto - o.limite)}</p>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.error('Erro ao carregar orçamentos:', e);
     }
 }
 
